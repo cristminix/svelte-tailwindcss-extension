@@ -15,30 +15,31 @@ function generateManifest() {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  build: {
-    minify: false,
-    sourcemap: true,
-    // rollupOptions: {
-    //   input: {
-    //     ["content-script-inject"]: path.resolve(__dirname, "src/content-scripts/content-inject.ts"),
-    //   },
-    // },
-  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  plugins: [
-    svelte(),
-    webExtension({
-      // disableAutoLaunch:true,
-      manifest: generateManifest,
-      browser: "firefox",
-      watchFilePaths: ["package.json", "manifest.json"],
-      webExtConfig: {
-        startUrl: "https://www.linkedin.com/learning",
+
+  plugins: [svelte()],
+  define: {
+    "process.env": {},
+  },
+  build: {
+    emptyOutDir: true,
+    outDir: path.resolve(__dirname, "dist"),
+    lib: {
+      formats: ["iife"],
+      entry: path.resolve(__dirname, "src/content-scripts/content-inject.ts"),
+      name: "LLFetcher",
+    },
+    rollupOptions: {
+      output: {
+        entryFileNames: "content-script-inject.js",
+        extend: true,
       },
-    }),
-  ],
+    },
+    minify: false,
+    sourcemap: true,
+  },
 })

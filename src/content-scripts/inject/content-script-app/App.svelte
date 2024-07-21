@@ -1,6 +1,4 @@
 <script lang="ts">
-  import browser from "webextension-polyfill"
-
   import { recursiveJSONStringify } from "@/global/fn/recursiveJSONStringify"
   import { hasMethod } from "@/global/fn/hasMethod"
   export let containerId: string
@@ -21,9 +19,6 @@
     urlPath.update((o) => value)
   }
 
-  const handleClick = (e: Event) => {
-    browser.runtime.sendMessage({ action: "Hi from content script 👋" })
-  }
   let inputScriptEl: HTMLTextAreaElement
   let outputScriptEl: HTMLTextAreaElement
 

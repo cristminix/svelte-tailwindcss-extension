@@ -1,5 +1,13 @@
-import { ActivePageScriptRunner as runner } from "./inject";
+import { injectScriptSync } from "@/global/fn/injectScriptSync"
+import ContentScriptProxy from "./ContentScriptProxy"
+import { injectLinkSync } from "@/global/fn/injectLinkSync"
 
-window.onload = () => {
-  runner.cleanup().run();
-};
+const main = async () => {
+  const contentScript = new ContentScriptProxy()
+  /*INJECT_START*/
+  await injectScriptSync("content-script-inject.js")
+  await injectLinkSync("stylesheet", "style.css")
+  /*INJECT_END*/
+}
+
+main()

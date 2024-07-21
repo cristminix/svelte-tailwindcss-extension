@@ -103,7 +103,7 @@
       <button id="exec-button" on:click={handleExecButton}> Execute Page Fn </button>
     </div>
   </div>
-  <CoursePageChecker validCoursePage={$validCoursePage} />
+  <CoursePageChecker {validCoursePage} />
 </div>
 
 <style>

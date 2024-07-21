@@ -3,17 +3,17 @@
   import { writable } from "svelte/store"
   import CheckerTag from "./CheckerTag.svelte"
 
-  export let validCoursePage: boolean
+  export let validCoursePage = writable(false)
 
   const checkers = writable("[]")
   const tree = writable(0)
   const maxTree = 10
 
   function updateTree() {
-    console.log(validCoursePage)
-    if (typeof chrome !== "undefined") {
-      console.log(chrome)
-    }
+    console.log($validCoursePage)
+    // if (typeof chrome !== "undefined") {
+    //   console.log(chrome)
+    // }
 
     tree.update((currentTree) => {
       let newTree = currentTree + 1
@@ -62,20 +62,19 @@
   onMount(() => {
     updateTree()
   })
+  validCoursePage.subscribe((value) => {
+    if (value) {
+      updateTree()
+    }
+  })
 </script>
 
-{#if typeof buildTreeTag(parsedCheckers) === "string"}
-  <CheckerTag hasChildren={false}>{buildTreeTag(parsedCheckers)}</CheckerTag>
+{#if $validCoursePage}
+  <CheckerTag hasChildren={false}>END</CheckerTag>
 {:else}
-  <CheckerTag hasChildren={true}>
-    {#if parsedCheckers.length}
-      <svelte:component this={CheckerTag} hasChildren={true}>
-        <!-- <CoursePageChecker {validCoursePage} checker={parsedCheckers} /> -->
-      </svelte:component>
-    {:else}
-      {buildTreeTag(parsedCheckers)}
-    {/if}
-  </CheckerTag>
+  {#each parsedCheckers as { index, item }}
+    <CheckerTag hasChildren={true} />
+  {/each}
 {/if}
 
 <style>

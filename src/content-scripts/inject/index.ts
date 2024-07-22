@@ -9,7 +9,7 @@ export const ActivePageScriptRunner = {
     return this
   },
   run() {
-    Logger.debug(`Starting ${runnerName} Gui v1.0.0`)
+    Logger.debug(`Starting ${runnerName} Gui v3.1.0`)
     this.init()
   },
   init() {

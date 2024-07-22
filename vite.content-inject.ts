@@ -26,7 +26,7 @@ export default defineConfig({
     "process.env": {},
   },
   build: {
-    emptyOutDir: true,
+    emptyOutDir: false,
     outDir: path.resolve(__dirname, "dist"),
     lib: {
       formats: ["iife"],

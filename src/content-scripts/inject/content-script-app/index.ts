@@ -1,5 +1,5 @@
 import Logger from "@/global/classes/Logger"
-import App from "./App.svelte"
+import App from "./ContentScriptApp.svelte"
 import { attachRouteChangesEvent, createAppRootElement, getCourseSlugByPath } from "@/content-scripts/inject/fn"
 import { waitForElm } from "@/global/fn/waitForElm"
 import { isCoursePage } from "@/content-scripts/inject/fn/isCoursePage"

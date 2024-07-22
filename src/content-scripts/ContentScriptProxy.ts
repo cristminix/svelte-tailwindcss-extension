@@ -3,6 +3,7 @@ import { onMessage } from "@/global/fn/onMessage"
 import type { InputScriptInterface, OutputScriptContentCallback } from "./types"
 import { sendMessage } from "@/global/fn/sendMessage"
 import { waitForElm } from "@/global/fn/waitForElm"
+import type { MessageEventInterface } from "@/global/classes/types"
 
 class ContentScriptProxy {
   constructor() {
@@ -10,7 +11,8 @@ class ContentScriptProxy {
   }
 
   initController() {
-    onMessage((evt, source) => {
+    onMessage((evt: MessageEventInterface, sender) => {
+      console.log(`ContentScriptProxy: receive message `, { evt, sender })
       switch (evt.name) {
         case "cmd.getCourseInfo":
           this.onCommand(evt.name)
@@ -84,7 +86,7 @@ class ContentScriptProxy {
   executeScriptContent(is: InputScriptInterface, callback: OutputScriptContentCallback, caller = "popup") {
     try {
       if (!is.ocls) {
-        is.ocls = createRandCls("is")
+        is.ocls = createRandCls("os")
       }
       this.setInputScriptCaller(caller)
       this.setInputScriptContent(is)
@@ -130,19 +132,25 @@ class ContentScriptProxy {
   //         // console.log(e)
   //     }
   // }
+  lastSpanSelector: string = ""
   waitForScriptOutput(ocls: string, callback: OutputScriptContentCallback, caller = "popup") {
-    waitForElm(`.${ocls}`).then((elm) => {
-      const inputElem = elm as HTMLTextAreaElement
+    this.lastSpanSelector = `span[data-test=${ocls}]`
+    console.log(`waiting for span selector ${this.lastSpanSelector}`)
+
+    waitForElm(this.lastSpanSelector).then((elm) => {
+      console.log(`Found last span selector ${this.lastSpanSelector}`)
+      const inputElem = this.getOutputScriptEl() as HTMLTextAreaElement
       const data = JSON.parse(inputElem.value)
 
       callback(data)
+
+      elm.remove()
     })
   }
-
+  // wait for valid course
   waitForCheckerElm() {
     waitForElm(".course-checker-last").then((el) => {
       // console.log(el)
-
       if (el) {
         el.setAttribute("class", "_blank")
         setTimeout(() => {
@@ -155,12 +163,14 @@ class ContentScriptProxy {
 
   onCommand(command: string, param?: any) {
     const cmd = command.replace(/^cmd\./, "")
-    const ocls = createRandCls("is")
+    const ocls = createRandCls("os")
     const is = {
       cmd,
       ocls,
       param,
     }
+    console.log(`ContentScriptProxy.onCommand()`, { is })
+
     this.executeScriptContent(is, (data) => {
       // console.log(data)
       sendMessage(`${command}`, data, "popup")

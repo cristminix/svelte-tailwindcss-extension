@@ -1,7 +1,7 @@
 import initSqlJs from "sql.js"
 import { drizzle } from "drizzle-orm/sql-js"
 import { count, sql, eq, and, asc, desc, like, or } from "drizzle-orm"
-import { isBrowser } from "@/global/fn/isBrowser"
+// import { isBrowser } from "@/global/fn/isBrowser"
 import { calculateTotalPages } from "@/global/fn/calculateTotalPages"
 import { calculateOffset } from "@/global/fn/calculateOffset"
 import type Fs from "./Fs"
@@ -10,11 +10,6 @@ export type SearchType = "single" | "all" | null
 // import { isBrowser } from "../../../../fn/isBrowser"
 // import { calculateTotalPages } from "../../../../fn/calculateTotalPages"
 // import { calculateOffset } from "../../../../fn/calculateOffset"
-const getWasmUrl = (file: string) => {
-  //   console.log(file)
-  // return `/web/data/sql/${file}`
-  return `https://sql.js.org/dist/${file}`
-}
 
 class DrizzleBaseModelRw {
   wasmPath = "web/data/sql/sql-wasm.wasm"
@@ -31,9 +26,10 @@ class DrizzleBaseModelRw {
   searchFields: any[] = []
   defaultOrder: any
 
-  constructor(fs: Fs, schema: any) {
+  constructor(fs: Fs) {
     this.fs = fs
-    this.schema = schema
+    // this.schema = schema
+    // this.dir = "/db"
   }
 
   getSearchFields() {
@@ -158,29 +154,6 @@ class DrizzleBaseModelRw {
   }
   getWasmPath() {
     return `${this.dir}/${this.wasmPath}`
-  }
-  async initOrm() {
-    if (this.ready) return
-
-    const dbpath = this.getDbPath()
-    const sqlWasmGitPath = this.getWasmPath()
-    console.log(`orm:try to read ${dbpath}`)
-    try {
-      if (this.fs) {
-        const filebuffer = await this.fs.readFileSync(dbpath)
-
-        const sqlPromise = await initSqlJs({
-          locateFile: (file) => (isBrowser() ? getWasmUrl(file) : sqlWasmGitPath),
-        })
-
-        this.sqldb = new sqlPromise.Database(filebuffer as Buffer)
-        const db = drizzle(this.sqldb, { schema: this.schema })
-        this.db = db
-        this.ready = true
-      }
-    } catch (e) {
-      console.error(e)
-    }
   }
 
   getAll() {

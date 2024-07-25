@@ -4,10 +4,12 @@ import type { InputScriptInterface, OutputScriptContentCallback } from "./types"
 import { sendMessage } from "@/global/fn/sendMessage"
 import { waitForElm } from "@/global/fn/waitForElm"
 import type { MessageEventInterface } from "@/global/classes/types"
+import { initDraggable } from "./initDraggable"
 
 class ContentScriptProxy {
   constructor() {
     this.initController()
+    initDraggable()
   }
 
   initController() {

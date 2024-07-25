@@ -9,6 +9,7 @@
   import type { InputScriptInterface } from "@/content-scripts/types"
 
   import { createRandCls } from "@/global/fn/createRandCls"
+  import { onDestroy, onMount } from "svelte"
 
   // converted from state
   export const validCoursePage = writable(false)
@@ -35,9 +36,6 @@
   urlPath.subscribe((value) => {
     slug.update((o) => getCourseSlugByPath(value))
   })
-  // onMount(()=>{
-  //   console.log(`isCoursePage ${$validCoursePage}`)
-  // })
 
   export const runScript = async () => {
     let is: InputScriptInterface = {
@@ -109,7 +107,7 @@
   }
 </script>
 
-<div id={containerId} class={$display}>
+<div id={containerId} class="{$display} draggable">
   {#if $validCoursePage}
     <span>{$slug}</span>
   {:else}
@@ -151,7 +149,6 @@
   }
   #content-script-app {
     flex-direction: column;
-    width: 400px;
     position: absolute;
     background: #000;
     color: #fff;

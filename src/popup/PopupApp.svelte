@@ -22,10 +22,15 @@
   import { onMount } from "svelte"
   import { onMessage } from "@/global/fn/onMessage"
   import { sendMessage } from "@/global/fn/sendMessage"
+
   interface LastCourseInterface {
     name: string
     slug: string
   }
+
+  import DrizzleDB from "@/global/db/models/DrizzleDB"
+  const DB = DrizzleDB.getInstance()
+
   const lastCourseDdData: Writable<LastCourseInterface[]> = writable([])
 
   function onSelectCourse(event: Event & { currentTarget: EventTarget & HTMLSelectElement }) {
@@ -53,6 +58,14 @@
     onMessage((evt, sender) => {
       console.log(`PopupApp receive messages`, { evt, sender })
       onMessageCommand(evt, sender)
+    })
+    DB.initOrm().then(async () => {
+      console.log(`DB initOrm ${DB.ready}`)
+      if (DB.ready) {
+        // this.db.select().from(this.schema).all()
+        const result = await DB.getAll()
+        console.log(result)
+      }
     })
     return () => {}
   })

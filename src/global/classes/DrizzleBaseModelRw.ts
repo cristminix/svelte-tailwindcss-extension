@@ -26,7 +26,7 @@ class DrizzleBaseModelRw {
   path: string | null = null
   // git = null
   fs: Fs | null = null
-  schema: any = null
+  schema: any | null = null
   db: any = null
   logger: any = null
   ready = false

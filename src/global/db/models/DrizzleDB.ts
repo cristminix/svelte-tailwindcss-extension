@@ -4,7 +4,7 @@ import { AppSchema } from "./schema"
 class DrizzleDB extends DrizzleModelRw {
   path = "llfetcher.db"
   dir = "/db"
-  schema = AppSchema
+  schema: any = AppSchema
   static instance: DrizzleDB | null = null
   static getInstance() {
     if (!DrizzleDB.instance) {

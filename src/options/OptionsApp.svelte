@@ -29,14 +29,13 @@
   }
 </script>
 
+<!-- 
 <nav>
   <Link {routeApp} to="/about" isActive={page === About}>About</Link> &nbsp; &nbsp;
   <Link {routeApp} to="/contact" isActive={page === Contact}>Contact Us</Link>
-</nav>
+</nav> -->
 
 <Template {routeApp}>
-  <main>
-    <RoutesApp bind:this={routeApp} {onRouteChange} />
-    <svelte:component this={page} {queryString} />
-  </main>
+  <RoutesApp bind:this={routeApp} {onRouteChange} />
+  <svelte:component this={page} {queryString} />
 </Template>

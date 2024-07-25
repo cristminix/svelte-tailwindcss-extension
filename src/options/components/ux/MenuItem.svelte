@@ -29,12 +29,12 @@
   </div>
 
  -->
-  <li id={`${name}-accordion`} class="join join-vertical w-full" data-path={path.replace(/^\//, "")}>
+  <li id={`${name}-accordion`} class="join join-vertical w-full accordion-item" data-path={path.replace(/^\//, "")}>
     <div class="collapse collapse-arrow join-item border-base-300 border">
-      <input type="radio" name={`my-accordion-0`} checked={false} class=" " />
-      <div class="collapse-title text-sm !pb-0"><i class={icon}></i> {title}</div>
-      <div class="collapse-content p-1">
-        <ul class={cls22}>
+      <input type="radio" name={`my-accordion-0`} checked={false} class="!min-h-2" />
+      <div class="collapse-title text-sm !after:bg-blue-300"><i class={icon}></i> {title}</div>
+      <div class="collapse-content">
+        <ul class={`${cls22} !p-0`}>
           {#each Object.keys(childrens) as key}
             {@const item = childrens[key]}
             {#if !item.hidden}
@@ -47,9 +47,30 @@
   </li>
 {:else}
   <li>
-    <NavLink {routeApp} to={path} className={linkCls}>
+    <NavLink {routeApp} to={path} className={`${linkCls} !px-5 my-2`}>
       <i class={icon}></i>
       {title}
     </NavLink>
   </li>
 {/if}
+
+<style>
+  .collapse-arrow > .collapse-title {
+    padding: 12px 18px;
+    min-height: 28px;
+  }
+  .collapse-arrow > .collapse-title::after {
+    top: 22px;
+  }
+  .collapse-content {
+    padding: 0 12px 0px 12px;
+    margin-bottom: 0px;
+  }
+  .cls-22 {
+    margin-bottom: 12px;
+  }
+  .accordion-item {
+    /* margin-top: 0 !important; */
+    /* margin-bottom: 0 !important; */
+  }
+</style>

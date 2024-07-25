@@ -49,8 +49,8 @@
     Address:
     <input bind:value={$url} type="text" class="grow" placeholder="url" />
   </label>
-  <span>
+  <!-- <code>
     {$lastPath}
     {$lastQueryString}
-  </span>
+  </code> -->
 </div>

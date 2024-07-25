@@ -10,6 +10,15 @@ export type SearchType = "single" | "all" | null
 // import { isBrowser } from "../../../../fn/isBrowser"
 // import { calculateTotalPages } from "../../../../fn/calculateTotalPages"
 // import { calculateOffset } from "../../../../fn/calculateOffset"
+import { extGetUrl } from "../fn/extGetUrl"
+import * as schema from "@/global/db/models/schema"
+const getWasmUrl = (file: string) => {
+  return extGetUrl(`db/${file}`)
+}
+const getDBUrl = (file: string) => {
+  return extGetUrl(`db/${file}`)
+}
+const ENABLE_DEBUG = true
 
 class DrizzleBaseModelRw {
   wasmPath = "web/data/sql/sql-wasm.wasm"
@@ -31,7 +40,50 @@ class DrizzleBaseModelRw {
     // this.schema = schema
     // this.dir = "/db"
   }
+  async initOrm() {
+    if (this.ready) return
 
+    const dbpath = this.getDbPath()
+    if (ENABLE_DEBUG) console.log(`orm:try to read ${dbpath}`)
+    let ready = false
+    try {
+      if (this.fs) {
+        // check db dir
+        const dbDir = `${this.dir}`
+        if (!(await this.fs.existsSync(dbDir))) {
+          if (ENABLE_DEBUG) console.log(`mkdir:${dbDir}`)
+          await this.fs.mkdirSync(dbDir)
+        }
+        if (ENABLE_DEBUG) console.log(`checking ${dbpath} if exist`)
+
+        if (!(await this.fs.existsSync(dbpath))) {
+          const dbUrl = getDBUrl(this.path!)
+          if (ENABLE_DEBUG) console.log(`download database file: ${dbUrl}`)
+          const filebuffer = await fetch(dbUrl).then((response) => response.arrayBuffer())
+          if (ENABLE_DEBUG) console.log(`writing file: ${dbpath}`)
+
+          await this.fs.writeFileSync(dbpath, new Uint8Array(filebuffer))
+        } else {
+          console.log(`${dbpath} exist`)
+        }
+        const filebuffer = await this.fs.readFileSync(dbpath)
+
+        const sqlPromise = await initSqlJs({
+          locateFile: (file) => getWasmUrl(file),
+        })
+
+        this.sqldb = new sqlPromise.Database(filebuffer as Buffer)
+        const db = drizzle(this.sqldb, { schema })
+        // console.log(db)
+
+        this.db = db
+        ready = true
+      }
+    } catch (e) {
+      console.error(e)
+    }
+    this.ready = ready
+  }
   getSearchFields() {
     const allFields = Object.keys(this.schema)
 

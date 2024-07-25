@@ -29,6 +29,7 @@
   }
 
   import DrizzleDB from "@/global/db/models/DrizzleDB"
+  import { openOptionsPage } from "@/global/fn/openOptionsPage"
   const DB = DrizzleDB.getInstance()
 
   const lastCourseDdData: Writable<LastCourseInterface[]> = writable([])
@@ -65,6 +66,7 @@
         // this.db.select().from(this.schema).all()
         const result = await DB.getAll()
         console.log(result)
+        openOptionsPage()
       }
     })
     return () => {}

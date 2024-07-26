@@ -2,6 +2,8 @@
   export let to: string
   export let routeApp: any
   export let isActive: boolean = false
+  export let className: string
+
   const onNavigate = (event: Event) => {
     routeApp.setRoute(to)
     return event.preventDefault()

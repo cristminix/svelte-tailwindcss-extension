@@ -16,6 +16,7 @@
     "@sveltejs/vite-plugin-svelte": "^3.1.1",
     "@tsconfig/svelte": "^5.0.4",
     "@types/chrome": "^0.0.268",
+    "@types/jquery": "^3.5.30",
     "@types/sql.js": "^1.4.9",
     "@types/underscore": "^1.11.15",
     "@types/webextension-polyfill": "^0.10.0",
@@ -37,7 +38,10 @@
     "@isomorphic-git/lightning-fs": "^4.6.0",
     "bootstrap-icons": "^1.11.3",
     "drizzle-orm": "^0.32.0",
+    "fetch-retry": "^6.0.0",
     "idb-keyval": "^6.2.1",
+    "jquery": "^3.7.1",
+    "path-to-regexp": "^7.1.0",
     "sql.js": "^1.10.3",
     "underscore": "^1.13.6"
   }

@@ -1,6 +1,6 @@
 <script lang="ts">
+  import NavLink from "@/global/components/ux/NavLink.svelte"
   import { cls17, cls18, cls19, cls20, cls22, cls24, cls25 } from "./cls"
-  import NavLink from "./NavLink.svelte"
   export let routeApp: any
   export let hasChild: boolean
   export let title: string

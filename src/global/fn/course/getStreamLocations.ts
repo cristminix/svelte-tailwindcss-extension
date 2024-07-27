@@ -1,3 +1,4 @@
+import $ from "jquery"
 export const getStreamLocations = async (vMetaDataNd: any, toc: any, mStreamLocation: any) => {
   let streamLocations = mStreamLocation.getListByTocId(toc.id)
 
@@ -16,7 +17,7 @@ export const getStreamLocations = async (vMetaDataNd: any, toc: any, mStreamLoca
 
   if (pgStreamNds.length > 0) {
     for (const pgStreamElem of pgStreamNds) {
-      const pgStreamEl = jQuery(pgStreamElem)
+      const pgStreamEl = $(pgStreamElem)
       let fmt: any = pgStreamEl.find("height")
 
       if (fmt.length > 0) {

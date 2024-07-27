@@ -1,3 +1,5 @@
+import $ from "jquery"
+
 export const getVideoMetaNd = (vStatusUrn: string, doc: JQuery) => {
   // benchmark('getVideoMetaNd', 'start')
   let vMetaDataNd = null
@@ -7,7 +9,7 @@ export const getVideoMetaNd = (vStatusUrn: string, doc: JQuery) => {
   const statuses = []
 
   for (const statusEl of statusEls) {
-    statuses.push(parseInt(jQuery(statusEl).text()))
+    statuses.push(parseInt($(statusEl).text()))
   }
 
   if (vStatusLookups.length == 0) {
@@ -32,7 +34,7 @@ export const getVideoMetaNd = (vStatusUrn: string, doc: JQuery) => {
     let breakTheLoop = false
 
     for (const vStatusLookupEl of vStatusLookups) {
-      const elNd = jQuery(vStatusLookupEl).parent()
+      const elNd = $(vStatusLookupEl).parent()
       vMetaDataNd = elNd.find("presentation")
 
       if (vMetaDataNd.length == 0) {

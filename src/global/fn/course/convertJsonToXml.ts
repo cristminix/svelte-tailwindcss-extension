@@ -1,3 +1,6 @@
+import { OBJtoXML } from "./OBJtoXML"
+import { sanitizeKeys } from "./sanitizeKeys"
+
 export const convertJsonToXml = (schema: any) => {
   const row = sanitizeKeys({ schema })
   const result = OBJtoXML({ root: row })

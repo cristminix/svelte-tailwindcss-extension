@@ -1,14 +1,16 @@
+import $ from "jquery"
+
 export const parseJsonSchema = (responseText: any) => {
-  jQuery.expr[":"].containsRegex = jQuery.expr.createPseudo(function (pattern) {
+  $.expr[":"].containsRegex = $.expr.createPseudo(function (pattern) {
     var regex = new RegExp(pattern, "i")
     return function (elem) {
-      return regex.test(jQuery(elem).text())
+      return regex.test($(elem).text())
     }
   })
   let errorMessage = null
 
   let validResource = false
-  const elDiv = jQuery(`<div>${responseText}</div>`)
+  const elDiv = $(`<div>${responseText}</div>`)
 
   const signInBtns = elDiv.find('a:containsRegex("sign in")')
 

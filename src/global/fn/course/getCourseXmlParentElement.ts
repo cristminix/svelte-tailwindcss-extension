@@ -1,5 +1,5 @@
 import { findElementContainsBeginWith } from "./findElementContainsBeginWith"
-
+import $ from "jquery"
 export const getCourseXmlParentElement = (doc: JQuery) => {
   if (!doc) {
     return [null, null]
@@ -19,9 +19,9 @@ export const getCourseXmlParentElement = (doc: JQuery) => {
     console.log(courseUrn)
     let entityUrnNd = findElementContainsBeginWith(doc, "entityUrn", courseUrn)
     for (const entityUrnNdItem of entityUrnNd) {
-      if (jQuery(entityUrnNdItem).text().trim() == courseUrn) {
+      if ($(entityUrnNdItem).text().trim() == courseUrn) {
         // console.log(entityUrnNdItem)
-        p = jQuery(entityUrnNdItem).closest("included")
+        p = $(entityUrnNdItem).closest("included")
         break
       }
     }

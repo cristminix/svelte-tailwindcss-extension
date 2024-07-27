@@ -1,5 +1,5 @@
 import { slugify } from "./slugify"
-
+import $ from "jquery"
 export const getCourseSections = async (p: any, doc: JQuery, mSection: any, courseId: number) => {
   let sections = mSection.getListByCourseId(courseId)
   if (sections.length > 0) {
@@ -12,12 +12,12 @@ export const getCourseSections = async (p: any, doc: JQuery, mSection: any, cour
   sections = []
   let tocs: any = {}
   for (const sectionStarEl of courseSectionStars) {
-    const sectionStar = jQuery(sectionStarEl).text().trim()
+    const sectionStar = $(sectionStarEl).text().trim()
     let sectionNds = doc.find(`cachingKey:contains('${sectionStar}')`)
     // # print("213:%s" % section_star)
     if (sectionNds.length > 0) {
       for (const sectionNdElem of sectionNds) {
-        const sectionNd = jQuery(sectionNdElem)
+        const sectionNd = $(sectionNdElem)
         const sectionNdStar = sectionNd.text().trim()
         if (sectionNdStar == sectionStar) {
           let sectionNdP = sectionNd.parent()
@@ -40,7 +40,7 @@ export const getCourseSections = async (p: any, doc: JQuery, mSection: any, cour
             if (itemStarNds.length > 0) {
               for (const itemStarEl of itemStarNds) {
                 let itemStar: string = ""
-                const $itemStar = jQuery(itemStarEl)
+                const $itemStar = $(itemStarEl)
                 if ($itemStar.length > 0) itemStar = $itemStar.text().trim()
                 const skipPattern = "urn:li:learningApiTocItem:urn:li:learningApiAssessmen"
                 const matchSkipPattern = itemStar.match(skipPattern)

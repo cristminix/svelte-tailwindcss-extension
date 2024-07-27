@@ -1,3 +1,4 @@
+import $ from "jquery"
 export const getTocXmlParentElement = (itemStar: string, doc: JQuery) => {
   if (!doc) {
     return null
@@ -7,7 +8,7 @@ export const getTocXmlParentElement = (itemStar: string, doc: JQuery) => {
   let entityNdP = null
   if (tocNd.length > 1) {
     for (const tocNdElem of tocNd) {
-      const $tocNdElem = jQuery(tocNdElem)
+      const $tocNdElem = $(tocNdElem)
       // const entityUrnNd = $tocNdElem.find("entityUrn")
       // if(entityUrnNd.length>0){
       //     entityUrn = entityUrnNd.text().trim()
@@ -42,7 +43,7 @@ export const getTocXmlParentElement = (itemStar: string, doc: JQuery) => {
         let entityUrnNds = doc.find(`entityUrn:contains('${videoUrn}')`)
         if (entityUrnNds.length > 0) {
           for (const entityUrnNd of entityUrnNds) {
-            const $entityUrnNd = jQuery(entityUrnNd)
+            const $entityUrnNd = $(entityUrnNd)
             const text = $entityUrnNd.text().trim()
             // console.log(text)
             if (text == videoUrn) {

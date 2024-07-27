@@ -1,8 +1,8 @@
 [
   {
     "slug": "courses",
-    "childIconCls": "fa fa-bookmark-o",
-    "childRoutePath": "/manager/{SLUG_VALUE}",
+    "childIconCls": "fa-regular fa-bookmark",
+    "childRoutePath": "/course/display/:id/:slug",
     "dev": false,
     "displayField": "title",
     "hasChild": false,
@@ -11,7 +11,7 @@
     "model": "Course",
     "modelListMethod": "getList",
     "order": 0,
-    "path": "/manager",
+    "path": "/course",
     "slugField": "slug",
     "title": "Courses",
     "useModel": true,

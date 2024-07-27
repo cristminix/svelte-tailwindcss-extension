@@ -1,6 +1,9 @@
 <script lang="ts">
   import NavLink from "@/global/components/ux/NavLink.svelte"
   import { cls17, cls18, cls19, cls20, cls22, cls24, cls25 } from "./cls"
+  import { onMount } from "svelte"
+  import { writable } from "svelte/store"
+
   export let routeApp: any
   export let hasChild: boolean
   export let title: string
@@ -9,12 +12,44 @@
   export let name: string
   export let childrens: any
   export let index: number
-  const activeTabCls = "flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md dark:bg-gray-900 dark:text-white"
-  const activeMenuCls = "bg-gray-100 text-sm text-slate-700 rounded-md dark:bg-gray-900 dark:text-white"
+  export let parentIndex: number = -1
+  const menuPath = writable(path)
+  const activeMenuCls = "flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md dark:bg-gray-900 dark:text-white"
   const inactiveTabCls = cls24 + " hover:bg-gray-100  hover:bg-gray-100 dark:hover:bg-gray-700 text-xs"
-  const linkCls = /*isActive ? activeTabCls : */ inactiveTabCls
   //   const { pathname } = useLocation()
-  const pathname = ""
+  const { pathname } = routeApp.useLocation()
+  const linkCls = isActive() ? activeMenuCls : inactiveTabCls
+  const realMenuCls = `${linkCls} !px-5 my-2 menu-item-${parentIndex}-${index}`
+  const menuLinkCls = writable(realMenuCls)
+  function isActiveRootMenu(inputPath: string) {
+    const checked = pathname.startsWith(inputPath)
+    // console.log({ pathname, inputPath, checked })
+
+    return checked
+    // return false
+  }
+  function isActive() {
+    const active = pathname.startsWith($menuPath)
+    // console.log({ pathname, path, active })
+    return active
+  }
+  let self: any
+  const menuChilds = writable(childrens)
+  const addActivateHandler = () => {
+    routeApp.addRouteChangeCallback(() => {
+      console.log(`route changed ${title} ${parentIndex}-${index}`)
+      // menuChilds.update((o) => [])
+      menuLinkCls.update((o) => `${inactiveTabCls} !px-5 my-2 menu-item-${parentIndex}-${index}`)
+      setTimeout(() => {
+        // menuChilds.update((o) => [...childrens])
+        // menuPath.update((o) => path)
+        menuLinkCls.update((o) => activeMenuCls)
+      }, 512)
+    }, `menu-${index}`)
+  }
+  onMount(() => {
+    // addActivateHandler()
+  })
 </script>
 
 {#if hasChild}
@@ -31,14 +66,24 @@
  -->
   <li id={`${name}-accordion`} class="join join-vertical w-full accordion-item" data-path={path.replace(/^\//, "")}>
     <div class="collapse collapse-arrow join-item border-base-300 border">
-      <input type="radio" name={`my-accordion-0`} checked={false} class="!min-h-2" />
+      <input type="radio" name={`my-accordion-0`} checked={isActiveRootMenu(path)} class="!min-h-2" />
       <div class="collapse-title text-sm !after:bg-blue-300"><i class={icon}></i> {title}</div>
       <div class="collapse-content">
         <ul class={`${cls22} !p-0`}>
-          {#each Object.keys(childrens) as key}
+          {#each Object.keys($menuChilds) as key, idx}
             {@const item = childrens[key]}
             {#if !item.hidden}
-              <svelte:self {routeApp} childrens={item.childItems || {}} name={key} hasChild={item.hasChild} title={item.title} path={item.path} icon={item.iconCls} />
+              <svelte:self
+                parentIndex={index}
+                index={idx}
+                {routeApp}
+                childrens={item.childItems || {}}
+                name={key}
+                hasChild={item.hasChild}
+                title={item.title}
+                path={item.path}
+                icon={item.iconCls}
+              />
             {/if}
           {/each}
         </ul>
@@ -47,7 +92,7 @@
   </li>
 {:else}
   <li>
-    <NavLink {routeApp} to={path} className={`${linkCls} !px-5 my-2`}>
+    <NavLink bind:this={self} {routeApp} to={path} className={$menuLinkCls}>
       <i class={icon}></i>
       {title}
     </NavLink>

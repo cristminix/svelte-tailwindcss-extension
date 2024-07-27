@@ -3,11 +3,27 @@
   import * as idb from "idb-keyval"
   import { onMount } from "svelte"
 
-  export const url = writable("/?hello=1&supreme=2")
+  const url = writable("")
   const lastPath = writable("")
   const lastQueryString = writable<string | null>(null)
+  const pathname = writable("")
+  const queryString = writable<string | null>("")
   export const setUrl = (targetUrl: string) => {
+    idb.set("route.url", targetUrl)
     url.update((o) => targetUrl)
+    const [path, _queryString] = getRoute(targetUrl)
+    pathname.update((o) => path)
+    queryString.update((o) => _queryString)
+  }
+  export const setRoute = (newUrl: string) => {
+    setUrl(newUrl)
+  }
+  export function useLocation() {
+    return {
+      url: $url,
+      pathname: $pathname,
+      queryString: $queryString,
+    }
   }
   export const getRoute = (url: string | null = null): [string, string | null] => {
     const currentUrl = !url ? $url : url
@@ -22,12 +38,15 @@
     }
     return [path, queryString]
   }
-  export const setRoute = (newUrl: string) => {
-    idb.set("route.url", newUrl)
-    url.update((value) => newUrl)
+  let routeChangeCallbacks: any = {}
+  export const addRouteChangeCallback = (callback: any, key: string) => {
+    routeChangeCallbacks[key] = callback
   }
   export let onRouteChange = (path: string, queryString: string | null) => {
     console.log(path, queryString)
+  }
+  export function triggerRouteChange(path: string, queryString: string | null) {
+    Object.keys(routeChangeCallbacks).forEach((key) => routeChangeCallbacks[key](path, queryString))
   }
   url.subscribe((value) => {
     const [path, queryString] = getRoute(value)

@@ -10,8 +10,12 @@
   import Contact from "./components/Contact.svelte"
   import RoutesApp from "./components/RoutesApp.svelte"
   import Template from "./components/ux/Template.svelte"
+  import CoursePage from "./pages/course/CoursePage.svelte"
+  import CourseDisplayPage from "./pages/course/CourseDisplayPage.svelte"
+  import AddCoursePage from "./pages/course/AddCoursePage.svelte"
+  import type { SvelteComponent } from "svelte"
 
-  let routeApp: any
+  let routeApp: SvelteComponent
   let queryString = writable<string | null>(null)
   let routeParams = writable<any>(null)
 
@@ -23,6 +27,9 @@
     "/contact": Contact,
     "/contact/:id": Contact,
     "/contact/page/:page": Contact,
+    "/course": CoursePage,
+    "/course/display/:id/:slug": CourseDisplayPage,
+    "/course/add": AddCoursePage,
   }
 
   let page: any
@@ -65,6 +72,7 @@
       page = NotFound
     }
     queryString.update((o) => _queryString)
+    if (routeApp) routeApp.triggerRouteChange(path, _queryString)
   }
 </script>
 

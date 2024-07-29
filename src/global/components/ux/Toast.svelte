@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte"
+  // import { onMount } from "svelte"
   import CustomToast from "./CustomToast.svelte"
   import type { ToastItemInterface, ToastKind } from "./types"
   import { writable } from "svelte/store"
@@ -90,6 +90,7 @@
 </script>
 
 <div class="fixed top-0 right-4 m-4" style="z-index: 80;">
+  <!-- <code>[{JSON.stringify($toastList)}]</code> -->
   {#each $toastList as toast, index}
     <CustomToast {toast} bind:this={toastRefs[index]} on:update={(e) => handleToastUpdate(e, index)} />
   {/each}

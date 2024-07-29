@@ -6,8 +6,8 @@
 
   export let disabled: boolean = false
   export let loading: boolean = false
-  export let icon: string
-  export let className: string
+  export let icon: string = ""
+  export let className: string = ""
   export let caption: string
 
   const dispatch = createEventDispatcher()

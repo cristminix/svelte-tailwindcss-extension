@@ -1,8 +1,8 @@
 import DrizzleDB from "./DrizzleDB"
 import { AppSchema } from "./schema"
 
-class MCourse extends DrizzleDB {
+class MApp extends DrizzleDB {
   schema = AppSchema
 }
 
-export default MCourse
+export default MApp

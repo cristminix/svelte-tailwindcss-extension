@@ -5,7 +5,7 @@
   import "@fortawesome/fontawesome-free/css/all.min.css"
   import { writable, type Writable } from "svelte/store"
   import * as idb from "idb-keyval"
-
+  import { getActiveTab } from "@/global/fn/getActiveTab"
   export const greeting = writable("LLFetcher 3.1")
   export const lastCourseList = writable({})
   export const fetchBtnState = writable(0)
@@ -14,7 +14,7 @@
   export const validCoursePage = writable(false)
   export const disableFetchBtn = writable(false)
   export const isLogin = writable(false)
-  export const legacyMode = writable(false)
+  export const legacyMode = writable(true)
   export const blockMainContent = writable(false)
   export const btnCls = writable("fa-plus")
   export const selectedCourseSlug = writable("")
@@ -30,22 +30,81 @@
 
   import DrizzleDB from "@/global/db/models/DrizzleDB"
   import { openOptionsPage } from "@/global/fn/openOptionsPage"
-  const DB = DrizzleDB.getInstance()
+  // import { isLinkedinLearningUrl } from "@/global/fn/course/isLinkedinLearningUrl"
+  import { getCourseSlugFromUrl } from "@/global/fn/course/getCourseSlugFromUrl"
+  import { insertCourseLegacyM3Rec } from "./fn/insertCourseLegacyM3Rec"
+  import MSetting from "@/global/db/models/MSetting"
+  const mApp = DrizzleDB.getInstance()
+  const mSetting = MSetting.getInstance()
 
   const lastCourseDdData: Writable<LastCourseInterface[]> = writable([])
 
   function onSelectCourse(event: Event & { currentTarget: EventTarget & HTMLSelectElement }) {
     throw new Error("Function not implemented.")
   }
-
-  function addCourseFromCurrentUrl(event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
-    throw new Error("Function not implemented.")
+  async function onMessageAddCourseLegacy(data: any) {
+    console.log(`PopupApp.onMessageAddCourseLegacy:`, { data })
+    const courseSlug = await mSetting.get("last-course-slug")
+    insertCourseLegacyM3Rec(courseSlug, data, (slug: string, success: boolean) => {
+      if (success) {
+        console.log(`insertCourseLegacyM3Rec success: ${slug}`)
+        activateAddCourseOptionTab(courseSlug, true)
+        //
+      } else {
+        console.log(`insertCourseLegacyM3Rec failed: ${slug}`)
+        //
+      }
+    })
+  }
+  async function broadcastGetM3Rec(courseSlug: string) {
+    const msg = "cmd.getM3Rec"
+    sendMessage(msg, courseSlug)
+  }
+  async function addCourseLegacy(courseSlug: string) {
+    console.log(`PopupApp.addCourseLegacy: ${courseSlug}`)
+    await mSetting.set("last-course-slug", courseSlug)
+    blockMainContent.update((o) => true)
+    await broadcastGetM3Rec(courseSlug)
+  }
+  async function activateAddCourseOptionTab(courseSlug: string, legacyMode: boolean) {
+    idb.set("route.url", `/course/add/${courseSlug}${legacyMode ? "?legacyMode=true" : ""}`)
+    console.log(`PopupApp.activateAddCourseOptionTab: ${courseSlug}`)
+    openOptionsPage()
+  }
+  async function addCourseFromCurrentUrl(event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
+    const currentTab: any = await getActiveTab()
+    let errorMessage: string | null = null
+    let errorOccured = true
+    if (currentTab) {
+      const url = currentTab.url
+      if (url) {
+        const [courseSlug, tocSlug] = getCourseSlugFromUrl(url)
+        if (courseSlug && tocSlug) {
+          errorOccured = false
+          if ($legacyMode) {
+            return await addCourseLegacy(courseSlug)
+          } else {
+            return await activateAddCourseOptionTab(courseSlug, false)
+          }
+        } else {
+          errorMessage = `PopupApp.addCourseFromCurrentUrl: current tab url is not linkedin learning course url`
+        }
+      } else {
+        errorMessage = `PopupApp.addCourseFromCurrentUrl: cant get current tab url`
+      }
+    }
+    if (errorOccured) {
+      console.error(errorMessage)
+    }
   }
   function onMessageCommand(evt: MessageEventInterface, source: MessageSender) {
     console.log(evt)
     if (evt.name === "cmd.validCoursePage" || evt.name === "cmd.validCoursePageAuto") {
       validCoursePage.update((o) => evt.data)
       blockMainContent.update((o) => false)
+    } else if (evt.name === "cmd.getM3Rec") {
+      blockMainContent.update((o) => false)
+      onMessageAddCourseLegacy(evt.data)
     }
   }
   async function broadcastGetValidCourseMessage() {
@@ -60,20 +119,15 @@
       console.log(`PopupApp receive messages`, { evt, sender })
       onMessageCommand(evt, sender)
     })
-    DB.initOrm().then(async () => {
-      console.log(`DB initOrm ${DB.ready}`)
-      if (DB.ready) {
-        // this.db.select().from(this.schema).all()
-        const result = await DB.getAll()
-        console.log(result)
-        openOptionsPage()
-      }
+    Promise.all([mApp.initOrm(), mSetting.initOrm()]).then(async () => {
+      console.log(`DB initOrm ${mApp.ready}`)
+      console.log(`mSetting initOrm ${mSetting.ready}`)
     })
     return () => {}
   })
 </script>
 
-<div class="relative">
+<div class="relative min-h-[120px] p-4">
   {#if $blockMainContent}
     <div class="absolute top-0 start-0 w-full h-full bg-white/[.5] rounded-lg dark:bg-gray-800/[.4]"></div>
     <div class="absolute top-1/2 start-1/2 transform -translate-x-1/2 -translate-y-1/2">

@@ -35,7 +35,7 @@
   }
   let self: any
   const menuChilds = writable(childrens)
-  const addActivateHandler = () => {
+  /*const addActivateHandler = () => {
     routeApp.addRouteChangeCallback(() => {
       console.log(`route changed ${title} ${parentIndex}-${index}`)
       // menuChilds.update((o) => [])
@@ -50,6 +50,7 @@
   onMount(() => {
     // addActivateHandler()
   })
+  */
 </script>
 
 {#if hasChild}

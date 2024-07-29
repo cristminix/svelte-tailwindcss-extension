@@ -292,15 +292,15 @@ class DrizzleBaseModelRw {
     }
     return records
   }
-  async getRow(pk: number | string) {
+  async getRow(pkOrFilter: number | string | Partial<typeof this.schema>) {
     let condition
-    if (typeof pk === "object" && pk !== null) {
-      const objectParam = pk
+    if (typeof pkOrFilter === "object" && pkOrFilter !== null) {
+      const objectParam = pkOrFilter
       const validFilter = this.isValidFilter(objectParam)
       if (!validFilter) return null
       condition = this.addQueryFilter(objectParam)
     } else {
-      condition = this.addQueryFilter({ [this.pk]: pk })
+      condition = this.addQueryFilter({ [this.pk]: pkOrFilter })
     }
     const result = this.db.select().from(this.schema).where(condition)
 

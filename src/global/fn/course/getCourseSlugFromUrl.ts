@@ -3,10 +3,10 @@ import { isValidUrl } from "./isValidUrl"
 
 export const getCourseSlugFromUrl = (url: string) => {
   if (!isValidUrl(url)) {
-    return [false, false]
+    return [null, null]
   }
   if (!isLinkedinLearningUrl(url)) {
-    return [false, false]
+    return [null, null]
   }
   const slugs = url.replace("https://www.linkedin.com/learning/", "").split("/")
   const courseSlug = slugs[0]
@@ -16,5 +16,5 @@ export const getCourseSlugFromUrl = (url: string) => {
     return [courseSlug, tocSlug]
   }
 
-  return [false, false]
+  return [null, null]
 }

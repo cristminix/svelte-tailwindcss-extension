@@ -1,0 +1,18 @@
+import manifest from "../manifest.json" assert { type: "json" }
+import fs from "node:fs"
+async function writeManifest(manifest) {
+  const distManifestPath = "dist/manifest.json"
+  let manifestContent = JSON.parse((await fs.readFileSync(distManifestPath)).toString())
+  console.log(`Fix firefox permissions`)
+  const permissions = manifest["{{firefox}}.permissions"]
+  manifestContent.permissions = permissions
+  await fs.writeFileSync(distManifestPath, JSON.stringify(manifestContent, null, 2))
+  //   console.log({ permissions, manifestContent })
+}
+
+async function main() {
+  //   console.log({ manifest })
+  await writeManifest(manifest)
+}
+
+main()

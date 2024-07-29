@@ -29,7 +29,7 @@
     "/contact/page/:page": Contact,
     "/course": CoursePage,
     "/course/display/:id/:slug": CourseDisplayPage,
-    "/course/add": AddCoursePage,
+    "/course/add/:slug": AddCoursePage,
   }
 
   let page: any

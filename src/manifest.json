@@ -25,6 +25,7 @@
     }
   ],
   "{{chrome}}.permissions": ["scripting", "storage", "webNavigation", "tabs"],
+  "{{firefox}}.permissions": ["tabs", "activeTab", "storage", "http://localhost/*", "https://www.linkedin.com/*"],
   "{{chrome}}.action": {
     "default_popup": "src/popup.html"
   },
@@ -35,7 +36,6 @@
     "page": "src/options.html",
     "open_in_tab": true
   },
-  "{{firefox}}.permissions": ["storage"],
   "background": {
     "{{chrome}}.service_worker": "src/background.ts",
     "{{firefox}}.scripts": ["src/background.ts"]

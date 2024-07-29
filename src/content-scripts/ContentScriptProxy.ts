@@ -152,10 +152,11 @@ class ContentScriptProxy {
   // wait for valid course
   waitForCheckerElm() {
     waitForElm(".course-checker-last").then((el) => {
-      // console.log(el)
       if (el) {
         el.setAttribute("class", "_blank")
         setTimeout(() => {
+          console.log(`valid course found, try to run cmd.validCoursePageAuto`)
+
           this.onCommand("cmd.validCoursePageAuto")
           this.waitForCheckerElm()
         }, 3000)

@@ -1,3 +1,4 @@
+import { vi } from "vitest"
 import "fake-indexeddb/auto"
 import MSetting from "@/global/db/models/MSetting"
 const mSetting = MSetting.getInstance()

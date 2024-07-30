@@ -12,6 +12,7 @@ export type SearchType = "single" | "all" | null
 // import { calculateOffset } from "../../../../fn/calculateOffset"
 import { extGetUrl } from "../fn/extGetUrl"
 import * as schema from "@/global/db/models/schema"
+import { isBrowser } from "../fn/isBrowser"
 const getWasmUrl = (file: string) => {
   return extGetUrl(`db/${file}`)
 }
@@ -46,6 +47,7 @@ class DrizzleBaseModelRw {
     const dbpath = this.getDbPath()
     if (ENABLE_DEBUG) console.log(`orm:try to read ${dbpath}`)
     let ready = false
+    const IS_BROWSER = isBrowser()
     try {
       if (this.fs) {
         // check db dir
@@ -59,18 +61,29 @@ class DrizzleBaseModelRw {
         if (!(await this.fs.existsSync(dbpath))) {
           const dbUrl = getDBUrl(this.path!)
           if (ENABLE_DEBUG) console.log(`download database file: ${dbUrl}`)
-          const filebuffer = await fetch(dbUrl).then((response) => response.arrayBuffer())
+          // let filebuffer: any
+          if (IS_BROWSER) {
+            const filebuffer = await fetch(dbUrl).then((response) => response.arrayBuffer())
+            await this.fs.writeFileSync(dbpath, new Uint8Array(filebuffer))
+          } else {
+            // INIT FOR NON BROWSER
+            // if(await )
+            // filebuffer = null
+            // console.log(filebuffer)
+          }
           if (ENABLE_DEBUG) console.log(`writing file: ${dbpath}`)
-
-          await this.fs.writeFileSync(dbpath, new Uint8Array(filebuffer))
         } else {
           console.log(`${dbpath} exist`)
         }
         const filebuffer = await this.fs.readFileSync(dbpath)
-
-        const sqlPromise = await initSqlJs({
-          locateFile: (file) => getWasmUrl(file),
-        })
+        let sqlPromise: any
+        if (IS_BROWSER) {
+          sqlPromise = await initSqlJs({
+            locateFile: (file) => getWasmUrl(file),
+          })
+        } else {
+          sqlPromise = await initSqlJs()
+        }
 
         this.sqldb = new sqlPromise.Database(filebuffer as Buffer)
         const db = drizzle(this.sqldb, { schema })

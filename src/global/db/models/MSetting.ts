@@ -1,4 +1,3 @@
-import Fs from "@/global/classes/Fs"
 import { SettingSchema } from "./schema"
 import DrizzleDB from "./DrizzleDB"
 import { eq } from "drizzle-orm"
@@ -6,17 +5,6 @@ import { eq } from "drizzle-orm"
 class MSetting extends DrizzleDB {
   // pk = "key"
   schema = SettingSchema
-
-  static instance: MSetting | null = null
-  static getInstance() {
-    if (!MSetting.instance) {
-      const fs = new Fs("fs")
-      // check db folder
-
-      MSetting.instance = new MSetting(fs)
-    }
-    return MSetting.instance
-  }
 
   async get(key: string) {
     const record = await this.getRow({ key })

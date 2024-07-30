@@ -1,101 +1,25 @@
-import initSqlJs from "sql.js"
 import { drizzle } from "drizzle-orm/sql-js"
-import { count, sql, eq, and, asc, desc, like, or } from "drizzle-orm"
-// import { isBrowser } from "@/global/fn/isBrowser"
+import { count, eq, and, asc, desc, like, or } from "drizzle-orm"
 import { calculateTotalPages } from "@/global/fn/calculateTotalPages"
 import { calculateOffset } from "@/global/fn/calculateOffset"
-import type Fs from "./Fs"
 export type SearchType = "single" | "all" | null
-// import * as schema from "../../schema/schema"
-// import { isBrowser } from "../../../../fn/isBrowser"
-// import { calculateTotalPages } from "../../../../fn/calculateTotalPages"
-// import { calculateOffset } from "../../../../fn/calculateOffset"
-import { extGetUrl } from "../fn/extGetUrl"
-import * as schema from "@/global/db/models/schema"
-import { isBrowser } from "../fn/isBrowser"
-const getWasmUrl = (file: string) => {
-  return extGetUrl(`db/${file}`)
-}
-const getDBUrl = (file: string) => {
-  return extGetUrl(`db/${file}`)
-}
-const ENABLE_DEBUG = true
-
+import type { SqlDB } from "./SqlDB"
+import * as schema from "../db/models/schema"
 class DrizzleBaseModelRw {
-  wasmPath = "web/data/sql/sql-wasm.wasm"
   pk: string = "id"
-  path: string | null = null
-  // git = null
-  fs: Fs | null = null
   schema: any | null = null
   db: any = null
   logger: any = null
-  ready = false
-  dir: string | null = null
-  sqldb: any = null
   searchFields: any[] = []
   defaultOrder: any
-
-  constructor(fs: Fs) {
-    this.fs = fs
-    // this.schema = schema
-    // this.dir = "/db"
+  sqldb: SqlDB | null = null
+  constructor(sqldb: SqlDB | null = null) {
+    if (sqldb) this.setSqlDb(sqldb)
   }
-  async initOrm() {
-    if (this.ready) return
 
-    const dbpath = this.getDbPath()
-    if (ENABLE_DEBUG) console.log(`orm:try to read ${dbpath}`)
-    let ready = false
-    const IS_BROWSER = isBrowser()
-    try {
-      if (this.fs) {
-        // check db dir
-        const dbDir = `${this.dir}`
-        if (!(await this.fs.existsSync(dbDir))) {
-          if (ENABLE_DEBUG) console.log(`mkdir:${dbDir}`)
-          await this.fs.mkdirSync(dbDir)
-        }
-        if (ENABLE_DEBUG) console.log(`checking ${dbpath} if exist`)
-
-        if (!(await this.fs.existsSync(dbpath))) {
-          const dbUrl = getDBUrl(this.path!)
-          if (ENABLE_DEBUG) console.log(`download database file: ${dbUrl}`)
-          // let filebuffer: any
-          if (IS_BROWSER) {
-            const filebuffer = await fetch(dbUrl).then((response) => response.arrayBuffer())
-            await this.fs.writeFileSync(dbpath, new Uint8Array(filebuffer))
-          } else {
-            // INIT FOR NON BROWSER
-            // if(await )
-            // filebuffer = null
-            // console.log(filebuffer)
-          }
-          if (ENABLE_DEBUG) console.log(`writing file: ${dbpath}`)
-        } else {
-          console.log(`${dbpath} exist`)
-        }
-        const filebuffer = await this.fs.readFileSync(dbpath)
-        let sqlPromise: any
-        if (IS_BROWSER) {
-          sqlPromise = await initSqlJs({
-            locateFile: (file) => getWasmUrl(file),
-          })
-        } else {
-          sqlPromise = await initSqlJs()
-        }
-
-        this.sqldb = new sqlPromise.Database(filebuffer as Buffer)
-        const db = drizzle(this.sqldb, { schema })
-        // console.log(db)
-
-        this.db = db
-        ready = true
-      }
-    } catch (e) {
-      console.error(e)
-    }
-    this.ready = ready
+  setSqlDb(sqldb: SqlDB) {
+    this.sqldb = sqldb
+    this.db = drizzle(this.sqldb.getSqlDB(), { schema })
   }
   getSearchFields() {
     const allFields = Object.keys(this.schema)
@@ -201,24 +125,8 @@ class DrizzleBaseModelRw {
     if (row) return row.count
     return 0
   }
-  async commit(push = false) {
-    const arrBuffer = this.sqldb.export()
-    console.log(`Write ${this.path}`)
-    // await this.git.commit([this.path])
-    try {
-      // await this.fs.writeFileSync(this.getDbPath(), arrBuffer)
-    } catch (e) {
-      // console.log(`lfs:error cant write ${this.path}`, e)
-    }
-    if (push) {
-      // await this.git.push()
-    }
-  }
-  getDbPath() {
-    return `${this.dir}/${this.path}`
-  }
-  getWasmPath() {
-    return `${this.dir}/${this.wasmPath}`
+  async commit() {
+    if (this.sqldb) return await this.sqldb.commit()
   }
 
   getAll() {

@@ -5,16 +5,6 @@ import DrizzleDB from "./DrizzleDB"
 class MStreamLocation extends DrizzleDB {
   schema = StreamLocationSchema
 
-  static instance: MStreamLocation | null = null
-  static getInstance() {
-    if (!MStreamLocation.instance) {
-      const fs = new Fs("fs")
-      // check db folder
-
-      MStreamLocation.instance = new MStreamLocation(fs)
-    }
-    return MStreamLocation.instance
-  }
   async deleteByTocId(tocId: number) {
     // await this.deleteRows({tocId})
   }

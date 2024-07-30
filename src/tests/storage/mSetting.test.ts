@@ -1,14 +1,22 @@
-import { vi } from "vitest"
-import "fake-indexeddb/auto"
-import MSetting from "@/global/db/models/MSetting"
-const mSetting = MSetting.getInstance()
+import { SqlDB } from "@/global/classes/SqlDB"
+import DBStore from "@/global/db/DBStore"
+import type MSetting from "@/global/db/models/MSetting"
+const sqldb = new SqlDB()
+const dbStore = DBStore.getInstance()
 
 describe("MSetting", function () {
   it("should be able to set and update setting db", async () => {
-    await mSetting.initOrm()
+    await sqldb.init()
+    dbStore.setSqlDb(sqldb)
+    const mSetting = dbStore.get("Setting") as MSetting
     const settingKey = "last-course-slug"
     let savedSetting = await mSetting.get(settingKey)
     console.info({ savedSetting })
-    // expect(loadedFileContent).toEqual(inputFileContent)
+    const newValue = "new-value"
+    await mSetting.set(settingKey, newValue)
+    savedSetting = await mSetting.get(settingKey)
+    console.info({ savedSetting })
+
+    expect(savedSetting).toEqual(newValue)
   })
 })

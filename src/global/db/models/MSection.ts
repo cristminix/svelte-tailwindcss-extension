@@ -1,21 +1,9 @@
-import Fs from "@/global/classes/Fs"
 import { SectionSchema } from "./schema"
 // import DrizzleModelRw from "@/global/classes/DrizzleModelRw"
 import DrizzleDB from "./DrizzleDB"
 
 class MSection extends DrizzleDB {
   schema = SectionSchema
-
-  static instance: MSection | null = null
-  static getInstance() {
-    if (!MSection.instance) {
-      const fs = new Fs("fs")
-      // check db folder
-
-      MSection.instance = new MSection(fs)
-    }
-    return MSection.instance
-  }
 
   getBySlug(slug: string, courseId: number) {
     // return this.singleQuery({ query: { slug, courseId } })

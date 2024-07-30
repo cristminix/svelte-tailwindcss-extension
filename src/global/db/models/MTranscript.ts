@@ -1,20 +1,8 @@
-import Fs from "@/global/classes/Fs"
 import { TranscriptSchema } from "./schema"
 import DrizzleDB from "./DrizzleDB"
 
 class MTranscript extends DrizzleDB {
   schema = TranscriptSchema
-
-  static instance: MTranscript | null = null
-  static getInstance() {
-    if (!MTranscript.instance) {
-      const fs = new Fs("fs")
-      // check db folder
-
-      MTranscript.instance = new MTranscript(fs)
-    }
-    return MTranscript.instance
-  }
 
   async deleteByTocId(tocId: number) {
     // await this.deleteRows({tocId})

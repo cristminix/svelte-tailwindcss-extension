@@ -28,14 +28,17 @@
     slug: string
   }
 
-  import DrizzleDB from "@/global/db/models/DrizzleDB"
   import { openOptionsPage } from "@/global/fn/openOptionsPage"
   // import { isLinkedinLearningUrl } from "@/global/fn/course/isLinkedinLearningUrl"
   import { getCourseSlugFromUrl } from "@/global/fn/course/getCourseSlugFromUrl"
   import { insertCourseLegacyM3Rec } from "./fn/insertCourseLegacyM3Rec"
-  import MSetting from "@/global/db/models/MSetting"
-  const mApp = DrizzleDB.getInstance()
-  const mSetting = MSetting.getInstance()
+  import { SqlDB } from "@/global/classes/SqlDB"
+  import DBStore from "@/global/db/DBStore"
+  import type MSetting from "@/global/db/models/MSetting"
+
+  const sqldb = new SqlDB()
+  const dbStore = DBStore.getInstance()
+  const mSetting = dbStore.get("Setting") as MSetting
 
   const lastCourseDdData: Writable<LastCourseInterface[]> = writable([])
 
@@ -119,9 +122,8 @@
       console.log(`PopupApp receive messages`, { evt, sender })
       onMessageCommand(evt, sender)
     })
-    Promise.all([mApp.initOrm(), mSetting.initOrm()]).then(async () => {
-      console.log(`DB initOrm ${mApp.ready}`)
-      console.log(`mSetting initOrm ${mSetting.ready}`)
+    sqldb.init().then(async () => {
+      console.log(`mSetting initOrm ${mSetting.isReady()}`)
     })
     return () => {}
   })

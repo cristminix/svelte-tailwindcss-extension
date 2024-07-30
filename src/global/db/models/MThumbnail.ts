@@ -5,17 +5,6 @@ import DrizzleDB from "./DrizzleDB"
 class MThumbnail extends DrizzleDB {
   schema = ThumbnailSchema
 
-  static instance: MThumbnail | null = null
-  static getInstance() {
-    if (!MThumbnail.instance) {
-      const fs = new Fs("fs")
-      // check db folder
-
-      MThumbnail.instance = new MThumbnail(fs)
-    }
-    return MThumbnail.instance
-  }
-
   async deleteByCourseId(courseId: number) {
     // await this.deleteRows({ courseId })
   }

@@ -1,20 +1,9 @@
-import Fs from "@/global/classes/Fs"
 import { QStateSchema } from "./schema"
 import DrizzleDB from "./DrizzleDB"
 
 class MQState extends DrizzleDB {
   schema = QStateSchema
 
-  static instance: MQState | null = null
-  static getInstance() {
-    if (!MQState.instance) {
-      const fs = new Fs("fs")
-      // check db folder
-
-      MQState.instance = new MQState(fs)
-    }
-    return MQState.instance
-  }
   // async deleteByCourseId(courseId:number) {
   //   // await this.deleteRows({ courseId })
   // }

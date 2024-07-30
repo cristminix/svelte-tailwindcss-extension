@@ -1,20 +1,8 @@
-import Fs from "@/global/classes/Fs"
 import { ExerciseFileSchema } from "./schema"
 import DrizzleDB from "./DrizzleDB"
 
 class MExerciseFile extends DrizzleDB {
   schema = ExerciseFileSchema
-
-  static instance: MExerciseFile | null = null
-  static getInstance() {
-    if (!MExerciseFile.instance) {
-      const fs = new Fs("fs")
-      // check db folder
-
-      MExerciseFile.instance = new MExerciseFile(fs)
-    }
-    return MExerciseFile.instance
-  }
 
   getByNameAndCourseId(name: string, courseId: number) {
     // return this.singleQuery({query: {name,courseId}})

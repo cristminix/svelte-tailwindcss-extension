@@ -6,17 +6,6 @@ import DrizzleDB from "./DrizzleDB"
 class MCourse extends DrizzleDB {
   schema = CourseSchema
 
-  static instance: MCourse | null = null
-  static getInstance() {
-    if (!MCourse.instance) {
-      const fs = new Fs("fs")
-      // check db folder
-
-      MCourse.instance = new MCourse(fs)
-    }
-    return MCourse.instance
-  }
-
   getBySlug(slug: string) {
     // const results = this.db.queryAll(this.table, { query: { slug } });
     // return this.singleResult(results)

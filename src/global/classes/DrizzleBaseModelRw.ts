@@ -13,13 +13,17 @@ class DrizzleBaseModelRw {
   searchFields: any[] = []
   defaultOrder: any
   sqldb: SqlDB | null = null
+  ready: boolean = false
   constructor(sqldb: SqlDB | null = null) {
     if (sqldb) this.setSqlDb(sqldb)
   }
-
+  isReady() {
+    return this.ready
+  }
   setSqlDb(sqldb: SqlDB) {
     this.sqldb = sqldb
     this.db = drizzle(this.sqldb.getSqlDB(), { schema })
+    this.ready = true
   }
   getSearchFields() {
     const allFields = Object.keys(this.schema)

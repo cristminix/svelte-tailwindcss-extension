@@ -7,17 +7,21 @@
   import { getUrlSearchParams } from "@/global/fn/getUrlSearchParams"
   import MSetting from "@/global/db/models/MSetting"
   import { writable } from "svelte/store"
-
+  import type DBStore from "@/global/db/DBStore"
+  export let store: DBStore
   export let params: any = null
   export let queryString: string = ""
   let toastRef: Toast
   const loading = writable(true)
-  const mSetting = MSetting.getInstance()
+  const mSetting = store.get("Setting") as MSetting
+  store.onReady(() => {
+    loading.update((o) => false)
+  })
   onMount(() => {
     toastRef.add("This is toast message")
-    Promise.all([mSetting.initOrm()]).then(() => {
+    if (store.isReady()) {
       loading.update((o) => false)
-    })
+    }
   })
   function isLegacyMode() {
     const queryStringObj = getUrlSearchParams(queryString) as any

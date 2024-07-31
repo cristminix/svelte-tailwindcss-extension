@@ -8,10 +8,11 @@
   import { writable } from "svelte/store"
   import type { MenuInterface } from "./types"
   import type { TCourse } from "@/global/db/models/schema"
+  import type DBStore from "@/global/db/DBStore"
   const loading = writable(true)
   export let data: any
   export let routeApp: any
-  export let store: any
+  export let store: DBStore
   export let config: any
   const DEV_MODE = import.meta.env.DEV
   const menuData = writable(data)
@@ -21,7 +22,7 @@
     if (!DEV_MODE && item.dev) return false
     return false
   }
-  const mCourse = MCourse.getInstance()
+  const mCourse = store.get("Course") as MCourse
   const getChildrenByModel = (item: MenuInterface) => {
     // console.log(item, index)
     if (item.model === "Course") {
@@ -68,13 +69,17 @@
       })
     }, "menu")
   }
+  store.onReady(() => {
+    if (mCourse.isReady()) {
+      loading.update((o) => false)
+      addActivateHandler()
+    }
+  })
   onMount(() => {
-    mCourse.initOrm().then(() => {
-      if (mCourse.ready) {
-        loading.update((o) => false)
-        addActivateHandler()
-      }
-    })
+    if (mCourse.isReady()) {
+      loading.update((o) => false)
+      addActivateHandler()
+    }
   })
 </script>
 

@@ -13,7 +13,11 @@
   import CoursePage from "./pages/course/CoursePage.svelte"
   import CourseDisplayPage from "./pages/course/CourseDisplayPage.svelte"
   import AddCoursePage from "./pages/course/AddCoursePage.svelte"
-  import type { SvelteComponent } from "svelte"
+  import { onMount, type SvelteComponent } from "svelte"
+  import { SqlDB } from "@/global/classes/SqlDB"
+  import DBStore from "@/global/db/DBStore"
+  import type MSetting from "@/global/db/models/MSetting"
+  import FileManagerPage from "./pages/FileManagerPage.svelte"
 
   let routeApp: SvelteComponent
   let queryString = writable<string | null>(null)
@@ -22,6 +26,15 @@
   interface RoutingMap {
     [key: string]: any
   }
+  const sqldb = new SqlDB()
+  let dbStore: DBStore = DBStore.getInstance()
+  // const mSetting = dbStore.get("Setting") as MSetting
+  onMount(() => {
+    sqldb.init().then(() => {
+      dbStore = DBStore.getInstance()
+      dbStore.setSqlDb(sqldb)
+    })
+  })
   const routingMap: RoutingMap = {
     "/about": About,
     "/contact": Contact,
@@ -30,6 +43,7 @@
     "/course": CoursePage,
     "/course/display/:id/:slug": CourseDisplayPage,
     "/course/add/:slug": AddCoursePage,
+    "/file-manager": FileManagerPage,
   }
 
   let page: any
@@ -82,7 +96,7 @@
   <Link {routeApp} to="/contact" isActive={page === Contact}>Contact Us</Link>
 </nav> -->
 
-<Template {routeApp}>
+<Template {routeApp} store={dbStore}>
   <RoutesApp bind:this={routeApp} {onRouteChange} />
-  <svelte:component this={page} queryString={$queryString} params={$routeParams} />
+  <svelte:component this={page} queryString={$queryString} params={$routeParams} store={dbStore} />
 </Template>

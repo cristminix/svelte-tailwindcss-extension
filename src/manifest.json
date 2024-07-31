@@ -1,8 +1,7 @@
 {
   "{{chrome}}.manifest_version": 3,
   "{{firefox}}.manifest_version": 2,
-  "content_security_policy": "script-src 'self' http://localhost:* 'wasm-unsafe-eval'; object-src 'self';",
-
+  "{{firefox}}.content_security_policy": "script-src 'self' http://localhost:* 'wasm-unsafe-eval'; object-src 'self';",
   "icons": {
     "16": "icon/16.png",
     "32": "icon/32.png",
@@ -25,7 +24,7 @@
     }
   ],
   "{{chrome}}.permissions": ["scripting", "storage", "webNavigation", "tabs"],
-  "{{firefox}}.permissions": ["tabs", "activeTab", "storage", "http://localhost/*", "https://www.linkedin.com/*"],
+
   "{{chrome}}.action": {
     "default_popup": "src/popup.html"
   },

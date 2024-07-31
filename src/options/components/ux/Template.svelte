@@ -1,10 +1,11 @@
 <script lang="ts">
+  import type DBStore from "@/global/db/DBStore"
   import { cls0 } from "./cls"
   import Content from "./Content.svelte"
   import Sidebar from "./Sidebar.svelte"
   import SidebarToggle from "./SidebarToggle.svelte"
 
-  export let store: any = null
+  export let store: DBStore
   export let config: any = null
   export let routeApp: any
 </script>

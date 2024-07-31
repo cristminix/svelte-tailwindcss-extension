@@ -427,5 +427,26 @@
     "parent": -1,
     "children": [],
     "id": 38
+  },
+  {
+    "slug": "file-manager",
+    "childIconCls": "",
+    "childRoutePath": "",
+    "dev": true,
+    "displayField": "",
+    "hasChild": false,
+    "hidden": false,
+    "iconCls": "bi bi-folder",
+    "model": "",
+    "modelListMethod": "",
+    "order": 5,
+    "path": "/file-manager",
+    "slugField": "",
+    "title": "File Manager",
+    "useModel": false,
+    "level": 0,
+    "parent": -1,
+    "children": [],
+    "id": 38
   }
 ]

@@ -31,8 +31,11 @@ const models = {
 
 type ModelKeys = keyof typeof models
 
+type ReadyCallbackFn = (dbStore: DBStore) => void
 class DBStore {
+  ready: boolean = false
   models: DrizzleDB[] = []
+  onReadyCallbacks: ReadyCallbackFn[] = []
   static instance: DBStore | null = null
 
   static getInstance() {
@@ -48,9 +51,22 @@ class DBStore {
   }
 
   setSqlDb(sqldb: SqlDB) {
-    this.models.forEach((model) => model.setSqlDb(sqldb))
+    for (const model of this.models) model.setSqlDb(sqldb)
+    setTimeout(() => {
+      this.runOnReady()
+      this.ready = true
+    }, 256)
   }
-
+  isReady() {
+    return this.ready
+  }
+  runOnReady() {
+    let callback: ReadyCallbackFn | undefined
+    while ((callback = this.onReadyCallbacks.pop())) callback(this)
+  }
+  onReady(callback: ReadyCallbackFn) {
+    this.onReadyCallbacks.push(callback)
+  }
   get(key: string): DrizzleDB | undefined {
     const modelKey = `m${key}`
     return (this as any)[modelKey] as DrizzleDB | undefined

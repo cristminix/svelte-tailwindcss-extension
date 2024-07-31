@@ -1,10 +1,11 @@
 <script lang="ts">
+  import type DBStore from "@/global/db/DBStore"
   import { cls10, cls11, cls12 } from "./cls"
   import SideMenu from "./SideMenu.svelte"
   import appLogo from "/logo/icon-48.png"
   export let routeApp: any
 
-  export let store: any
+  export let store: DBStore
   export let config: any
   let sideMenuRef: any
   let hideSidebar = false

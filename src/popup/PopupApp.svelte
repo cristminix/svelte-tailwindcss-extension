@@ -123,7 +123,8 @@
       onMessageCommand(evt, sender)
     })
     sqldb.init().then(async () => {
-      console.log(`mSetting initOrm ${mSetting.isReady()}`)
+      dbStore.setSqlDb(sqldb)
+      // console.log(`mSetting initOrm ${mSetting.isReady()}`)
     })
     return () => {}
   })

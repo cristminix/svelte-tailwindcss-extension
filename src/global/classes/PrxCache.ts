@@ -1,10 +1,11 @@
 import * as idb from "idb-keyval"
 import type { OptionalParams } from "../components/grid/types"
+import { slugify } from "../fn/course/slugify"
 const WEBCACHE_PREFIX = "WebCache_"
 
 export class WebCache {
   key: string | null = null
-  content: string | OptionalParams = null
+  content: any | OptionalParams = null
   statusCode = 0
   url: string | null = null
 
@@ -14,7 +15,7 @@ export class WebCache {
   setUrl(url: string) {
     this.url = url
     if (url) {
-      this.key = `${WEBCACHE_PREFIX}${new Date().getTime()}`
+      this.key = `${WEBCACHE_PREFIX}${slugify(url)}`
     }
   }
   static async fromKey(key: string) {
@@ -48,7 +49,8 @@ export class WebCache {
   }
 
   async load() {
-    const data = await idb.get(this.getKey())
+    const key = this.getKey()
+    const data = await idb.get(key)
     if (data) {
       if (data.content) {
         this.content = data.content

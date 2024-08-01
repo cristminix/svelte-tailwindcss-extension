@@ -47,17 +47,25 @@
   }
   async function onMessageAddCourseLegacy(data: any) {
     console.log(`PopupApp.onMessageAddCourseLegacy:`, { data })
-    const courseSlug = await mSetting.get("last-course-slug")
-    insertCourseLegacyM3Rec(courseSlug, data, (slug: string, success: boolean) => {
-      if (success) {
-        console.log(`insertCourseLegacyM3Rec success: ${slug}`)
-        activateAddCourseOptionTab(courseSlug, true)
-        //
-      } else {
-        console.log(`insertCourseLegacyM3Rec failed: ${slug}`)
-        //
-      }
-    })
+    let courseSlug: string | null = null
+    try {
+      courseSlug = await mSetting.get("last-course-slug")
+    } catch (e) {
+      console.error(e)
+    }
+    console.log({ courseSlug })
+    if (courseSlug) {
+      insertCourseLegacyM3Rec(courseSlug, data, (slug: string, success: boolean) => {
+        if (success) {
+          console.log(`insertCourseLegacyM3Rec success: ${slug}`)
+          activateAddCourseOptionTab(courseSlug, true)
+          //
+        } else {
+          console.log(`insertCourseLegacyM3Rec failed: ${slug}`)
+          //
+        }
+      })
+    }
   }
   async function broadcastGetM3Rec(courseSlug: string) {
     const msg = "cmd.getM3Rec"
@@ -65,7 +73,11 @@
   }
   async function addCourseLegacy(courseSlug: string) {
     console.log(`PopupApp.addCourseLegacy: ${courseSlug}`)
-    await mSetting.set("last-course-slug", courseSlug)
+    try {
+      await mSetting.set("last-course-slug", courseSlug)
+    } catch (error) {
+      console.error(error)
+    }
     blockMainContent.update((o) => true)
     await broadcastGetM3Rec(courseSlug)
   }
@@ -115,6 +127,9 @@
     const msg = "cmd.validCoursePage"
     sendMessage(msg)
   }
+  dbStore.onReady(() => {
+    console.log(`mSetting  ${mSetting.isReady()}`)
+  })
   onMount(() => {
     console.log(`PopupApp: onMount called`)
     broadcastGetValidCourseMessage()
@@ -147,7 +162,11 @@
   <div class="welcome-page page gap-2 flex flex-col items-center pt-2">
     <div class="flex gap-2 items-center px-4">
       <div>
-        <img src={icon} alt="icon" class="w-8 h-8" />
+        <img
+          src={icon}
+          alt="icon"
+          class="w-8 h-8"
+        />
       </div>
       <div>
         <p class="font-bold pt-2 pb-4 text-center text-lg dark:text-white">
@@ -158,8 +177,14 @@
 
     <div class="action-cnt w-full">
       {#if $lastCourseDdData.length > 0}
-        <select class="select w-full max-w-xs" on:select={onSelectCourse}>
-          <option disabled selected={$selectedCourseSlug === ""}>Load last course</option>
+        <select
+          class="select w-full max-w-xs"
+          on:select={onSelectCourse}
+        >
+          <option
+            disabled
+            selected={$selectedCourseSlug === ""}>Load last course</option
+          >
           {#each $lastCourseDdData as course}
             <option>{course.name}</option>
           {/each}
@@ -170,11 +195,18 @@
         <div class="btn-cnt text-center flex gap-2 p-2 items-center">
           <div class="form-control">
             <label class="label cursor-pointer">
-              <input type="checkbox" bind:checked={$legacyMode} class="checkbox checkbox-primary checkbox-sm" />
+              <input
+                type="checkbox"
+                bind:checked={$legacyMode}
+                class="checkbox checkbox-primary checkbox-sm"
+              />
               <span class="label-text dark:text-white text-xs ml-1">Legacy Mode</span>
             </label>
           </div>
-          <button disabled={$fetchBtnState == 1 || !$validCoursePage || $disableFetchBtn} class="mx-auto btn btn-primary btn-xs" on:click={addCourseFromCurrentUrl}
+          <button
+            disabled={$fetchBtnState == 1 || !$validCoursePage || $disableFetchBtn}
+            class="mx-auto btn btn-primary btn-xs"
+            on:click={addCourseFromCurrentUrl}
             ><i class={`fas ${$btnCls}`} />Add This Course
           </button>
         </div>

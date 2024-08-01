@@ -69,7 +69,8 @@ export class SqlDB {
         let sqlPromise: any
         if (IS_BROWSER) {
           sqlPromise = await initSqlJs({
-            locateFile: (file) => this.getWasmUrl(file),
+            // locateFile: (file) => this.getWasmUrl(file),
+            locateFile: (file) => `https://sql.js.org/dist/${file}`,
           })
         } else {
           sqlPromise = await initSqlJs()
@@ -78,7 +79,9 @@ export class SqlDB {
         this.sqldb = new sqlPromise.Database(filebuffer as Buffer)
         this.ready = true
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error(error)
+    }
     return this.ready
   }
   async commit() {

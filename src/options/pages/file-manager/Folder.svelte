@@ -6,19 +6,11 @@
   export let isSelected: TIsSelectedFn
   export let onSelect: TOnSelectFn
   export let data: any
-  //   export let handleFolderFileCreation: TFolderFileCreationFn
   export let isRoot: boolean
   export let setExpand: TSetExpandFn
 
   let isExpand = writable(data ? data.isExpanded : false)
   let selected = writable(data ? data.selected : false)
-  //   let showInput = writable({ visible: false, isFolder: false })
-
-  //   const handelClick = (e: Event, isFolder: boolean) => {
-  //     e.stopPropagation()
-  //     isExpand.set(true)
-  //     showInput.set({ visible: true, isFolder })
-  //   }
 
   const setExpanded = () => {
     isExpand.update((n) => {
@@ -28,12 +20,6 @@
     })
   }
 
-  //   const onCreateFolder = (e: KeyboardEvent) => {
-  //     if (e.key === "Enter" && (e.target as HTMLInputElement).value) {
-  //       handleFolderFileCreation(data.id, (e.target as HTMLInputElement).value, $showInput.isFolder)
-  //       showInput.update((pre) => ({ ...pre, visible: false }))
-  //     }
-  //   }
   onMount(() => {
     console.log(data)
   })
@@ -70,10 +56,10 @@
     </section>
   {:else}
     <div
-      class="file {isSelected(data.id) ? 'selected' : ''}"
       on:click={() => {
         onSelect(data.id, data.path)
       }}
+      class="file {isSelected(data.id) ? 'selected' : ''}"
     >
       <i class="fa fa-file mr-2" />
       <span class="filename">{data.name}</span>

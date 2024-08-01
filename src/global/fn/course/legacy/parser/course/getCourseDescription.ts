@@ -1,11 +1,15 @@
+import { cleanHtmlMarkup } from "@/global/fn/cleanHtmlMarkup"
+
 export function getCourseDescription(markup: any) {
+  let description = ""
   if (markup.descriptionV3) {
-    return markup.descriptionV3.text
+    description = markup.descriptionV3.text
   }
   if (markup.descriptionV2) {
-    return markup.descriptionV2.text
+    description = markup.descriptionV2.text
   }
   if (markup.description) {
-    return markup.description.text
+    description = markup.description.text
   }
+  return cleanHtmlMarkup(description)
 }

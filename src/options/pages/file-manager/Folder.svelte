@@ -1,11 +1,11 @@
 <script lang="ts">
   import { writable } from "svelte/store"
   import { onMount } from "svelte"
-  import type { TFolderFileCreationFn, TIsSelectedFn, TOnSelectFn, TSetExpandFn } from "../types"
+  import type { TFolderFileCreationFn, TFolderItem, TIsSelectedFn, TOnSelectFn, TSetExpandFn } from "../types"
 
   export let isSelected: TIsSelectedFn
   export let onSelect: TOnSelectFn
-  export let data: any
+  export let data: TFolderItem
   export let isRoot: boolean
   export let setExpand: TSetExpandFn
 
@@ -28,10 +28,17 @@
 {#if data}
   {#if data.isFolder}
     <section class="folder {isRoot ? 'root-folder' : ''}">
-      <div
+      <button
+        type="button"
         on:click={() => {
           setExpanded()
-          onSelect(data.id, data.path)
+          onSelect(data.id, data.path ?? "")
+        }}
+        on:keydown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            setExpanded()
+            onSelect(data.id, data.path ?? "")
+          }
         }}
         class="folder-wrap {isSelected(data.id) ? 'selected' : ''}"
       >
@@ -46,23 +53,37 @@
           <span class="folder-name mr-1">{data.name}</span>
         </div>
         <div class="folder-toolbar-action"></div>
-      </div>
+      </button>
 
       <div style="display: {$isExpand ? 'block' : 'none'};">
-        {#each data.items.sort() as item}
-          <svelte:self {isSelected} {onSelect} explorerData={data} {setExpand} data={item} />
-        {/each}
+        {#if data.items}
+          {#each data.items.sort() as item}
+            <svelte:self
+              {isSelected}
+              {onSelect}
+              explorerData={data}
+              {setExpand}
+              data={item}
+            />
+          {/each}
+        {/if}
       </div>
     </section>
   {:else}
-    <div
+    <button
+      type="button"
       on:click={() => {
-        onSelect(data.id, data.path)
+        onSelect(data.id, data.path ?? "")
+      }}
+      on:keydown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          onSelect(data.id, data.path ?? "")
+        }
       }}
       class="file {isSelected(data.id) ? 'selected' : ''}"
     >
       <i class="fa fa-file mr-2" />
       <span class="filename">{data.name}</span>
-    </div>
+    </button>
   {/if}
 {/if}

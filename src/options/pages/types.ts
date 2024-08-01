@@ -10,4 +10,5 @@ export type TFolderItem = {
   items?: TFolderItem[]
   isExpanded?: boolean
   path?: string
+  selected?:boolean
 }

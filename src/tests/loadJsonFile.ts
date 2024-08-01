@@ -1,17 +1,17 @@
-import fs from "node:fs"
-import path from "node:path"
+import fs from "fs/promises"
+import path from "path"
 
-export async function loadJsonFile(inputPath: string) {
+export async function loadJsonFile<T>(inputPath: string): Promise<T> {
   const dataDir = path.join("src/tests/data")
   const fullPath = path.join(dataDir, inputPath)
-  let obj: any = {}
-  if (await fs.existsSync(fullPath)) {
-    const fileContent = (await fs.readFileSync(fullPath)).toString()
-    try {
-      obj = JSON.parse(fileContent)
-    } catch (error) {}
-  } else {
-    console.error(`JSON file doesnt exists : ${fullPath}`)
+
+  try {
+    const fileContent = await fs.readFile(fullPath, "utf-8")
+    return JSON.parse(fileContent) as T
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to load JSON file ${fullPath}: ${error.message}`)
+    }
+    throw error
   }
-  return obj
 }

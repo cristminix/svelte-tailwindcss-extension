@@ -1,1 +1,3 @@
-export function getCourseGithubCodespace(markup: any) {}
+export function getCourseGithubCodespace(markup: any) {
+  return markup.githubCodespace
+}

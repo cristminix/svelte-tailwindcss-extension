@@ -6,7 +6,7 @@ export function getCourseAuthors(ds: any) {
   const results = getDsRecordsByType("com.linkedin.learning.api.deco.content.Author", ds)
 
   return results.map((item) => {
-    console.log({ item })
+    // console.log({ item })
     const { slug, entityUrn, biography, shortBiography, biographyV3, biographyV2, shortBiographyV2, shortBiographyV3 } = item
     return {
       name: slugToTitle(slug),

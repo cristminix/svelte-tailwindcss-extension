@@ -44,6 +44,7 @@ export interface CourseInterface {
 export interface SectionInterface {
   title: string
   slug: string
+  itemStars: string[]
 }
 export interface StreamLocationInterface {
   fmt: string
@@ -77,4 +78,5 @@ export interface CourseInfoInterface {
   exerciseFiles: ExerciseFileInterface[]
   description: string
   authors: AuthorInterface[]
+  sections: SectionInterface[]
 }

@@ -6,7 +6,7 @@ export async function initSqlJs() {
   let logMessage = "initSqlJs() : init database file for test environment"
   let success = false
   let error: any = null
-  const localFileDbpath = path.join("./dist/db/llfetcher.db")
+  const localFileDbpath = path.join("./public/db/llfetcher.db")
   const exists = await nodeFs.existsSync(localFileDbpath)
   const fs = new Fs("fs")
   if (exists) {

@@ -40,6 +40,7 @@ export class SqlDB {
       if (this.fs) {
         const dbDir = this.baseDir()
         if (!(await this.fs.existsSync(dbDir))) {
+          // console.log("here")
           if (ENABLE_DEBUG) console.log(`mkdir:${dbDir}`)
           await this.fs.mkdirSync(dbDir)
         }

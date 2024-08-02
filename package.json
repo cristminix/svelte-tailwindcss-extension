@@ -24,6 +24,7 @@
     "@types/sql.js": "^1.4.9",
     "@types/underscore": "^1.11.15",
     "@types/webextension-polyfill": "^0.10.0",
+    "@vitest/ui": "^2.0.5",
     "autoprefixer": "^10.4.19",
     "daisyui": "^4.12.10",
     "drizzle-kit": "^0.23.0",

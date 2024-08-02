@@ -29,7 +29,7 @@ class Fs extends LightningFs {
 
   async existsSync(path: string) {
     try {
-      if (await this.promises.stat(path)) return true
+      if (await this.statSync(path)) return true
     } catch (e) {
       // console.error(e)
       console.log(`lfs: ${path} not found`)

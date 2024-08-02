@@ -10,6 +10,7 @@ import { getCourseSubtitle } from "./course/getCourseSubtitle"
 import { getCourseDescription } from "./course/getCourseDescription"
 import { getCourseAuthor } from "./course/getCourseAuthor"
 import { getCourseAuthors } from "./course/getCourseAuthors"
+import { getCourseSections } from "./course/getCourseSections"
 
 export function getCourseInfo(ds: TM3Rec, slug: string): CourseInfoInterface | null {
   const rows = getDsRecordsByType("com.linkedin.learning.api.deco.content.Course", ds)
@@ -31,7 +32,8 @@ export function getCourseInfo(ds: TM3Rec, slug: string): CourseInfoInterface | n
     const exerciseFiles = getCourseExerciseFiles(markup)
     const description = getCourseDescription(markup)
     const authors = getCourseAuthors(ds)
-    console.log({ authors, exerciseFiles })
+    const sections = getCourseSections(ds, entityUrn)
+    // console.log({ authors, exerciseFiles, sections })
     courseInfo = {
       title,
       duration,
@@ -43,6 +45,7 @@ export function getCourseInfo(ds: TM3Rec, slug: string): CourseInfoInterface | n
       exerciseFiles,
       description,
       authors,
+      sections,
     }
   }
   return courseInfo

@@ -2,6 +2,7 @@ import type { SqlDB } from "../classes/SqlDB"
 import type DrizzleDB from "./models/DrizzleDB"
 import MApp from "./models/MApp"
 import MAuthor from "./models/MAuthor"
+import MAuthorCourse from "./models/MAuthorCourse"
 import MCourse from "./models/MCourse"
 import MDMSetup from "./models/MDMSetup"
 import MDMStatus from "./models/MDMStatus"
@@ -27,6 +28,7 @@ const models = {
   StreamLocation: MStreamLocation,
   Thumbnail: MThumbnail,
   Toc: MToc,
+  AuthorCourse: MAuthorCourse,
 } as const
 
 type ModelKeys = keyof typeof models

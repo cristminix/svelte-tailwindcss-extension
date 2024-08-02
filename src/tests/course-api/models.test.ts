@@ -2,7 +2,7 @@ import "fake-indexeddb/auto"
 
 import { loadJsonFile } from "../loadJsonFile"
 import type { CourseInfoInterface, TM3Rec } from "@/global/classes/types"
-import type { TCourse, TCourseN, TSection, TSectionN, TThumbnail, TThumbnailN, TTocN } from "@/global/db/models/schema"
+import type { TAuthor, TAuthorCourseN, TAuthorN, TCourse, TCourseN, TSection, TSectionN, TThumbnail, TThumbnailN, TTocN } from "@/global/db/models/schema"
 import { getCourseInfo } from "@/global/fn/course/legacy/parser/getCourseInfo"
 import { getCourseTocs } from "@/global/fn/course/legacy/parser/toc/getCourseTocs"
 import { SqlDB } from "@/global/classes/SqlDB"
@@ -17,6 +17,10 @@ import type MToc from "@/global/db/models/MToc"
 import type MThumbnail from "@/global/db/models/MThumbnail"
 import { createThumbnail } from "@/global/fn/course-api/thumbnail/createThumbnail"
 import { isTimeExpired } from "@/global/fn/course/isTimeExpired"
+import type MAuthor from "@/global/db/models/MAuthor"
+import { createCourseAuthor } from "@/global/fn/course-api/author/createCourseAuthor"
+import { createAuthorCourse } from "@/global/fn/course-api/author/createAuthorCourse"
+import type MAuthorCourse from "@/global/db/models/MAuthorCourse"
 const sqldb = new SqlDB()
 const dbStore = DBStore.getInstance()
 describe("Legacy Model test", async () => {
@@ -43,7 +47,9 @@ describe("Legacy Model test", async () => {
     const mSection = dbStore.get<MSection>("Section")
     const mToc = dbStore.get<MToc>("Toc")
     const mThumbnail = dbStore.get<MThumbnail>("Thumbnail")
-    const modelLoaded = mCourse && mSection && mToc && mThumbnail
+    const mAuthor = dbStore.get<MAuthor>("Author")
+    const mAuthorCourse = dbStore.get<MAuthorCourse>("AuthorCourse")
+    const modelLoaded = mCourse && mSection && mToc && mThumbnail && mAuthor && mAuthorCourse
     if (!modelLoaded) {
       console.error(`Failed to initialize models`)
       return
@@ -135,7 +141,24 @@ describe("Legacy Model test", async () => {
       /*----------------------------------------------------------------------------------*/
       /* create course author */
       /*----------------------------------------------------------------------------------*/
-
+      const { authors } = courseInfo
+      for (const author of authors) {
+        const { slug, name, biography, shortBiography } = author
+        let bio = biography
+        if (!bio || biography === "") {
+          bio = shortBiography
+        }
+        const authorRow: TAuthorN = {
+          slug,
+          name,
+          bio,
+        }
+        let authorRec = await createCourseAuthor(authorRow, mAuthor)
+        if (authorRec) {
+          const authorCourseRow: TAuthorCourseN = { authorId: authorRec.id, courseId: courseRec.id }
+          let authorCourseRec = await createAuthorCourse(authorCourseRow, mAuthorCourse)
+        }
+      }
       /*----------------------------------------------------------------------------------*/
       /* create course thumbnail */
       /*----------------------------------------------------------------------------------*/

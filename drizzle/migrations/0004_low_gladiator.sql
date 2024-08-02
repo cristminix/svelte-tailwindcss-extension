@@ -1,1 +1,0 @@
-CREATE UNIQUE INDEX `course_slug_unique` ON `course` (`slug`);

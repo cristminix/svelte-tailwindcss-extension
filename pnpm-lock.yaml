@@ -39,6 +39,12 @@ importers:
         specifier: ^1.13.6
         version: 1.13.7
     devDependencies:
+      '@esbuild/win32-ia32':
+        specifier: ^0.23.0
+        version: 0.23.0
+      '@rollup/rollup-win32-ia32-msvc':
+        specifier: ^4.19.2
+        version: 4.19.2
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.1.1
         version: 3.1.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2))
@@ -563,6 +569,12 @@ packages:
     cpu: [ia32]
     os: [win32]
 
+  '@esbuild/win32-ia32@0.23.0':
+    resolution: {integrity: sha512-7L1bHlOTcO4ByvI7OXVI5pNN6HSu6pUQq9yodga8izeuB1KcT2UkHaH6118QJwopExPn0rMHIseCTx1CRo/uNA==}
+    engines: {node: '>=18'}
+    cpu: [ia32]
+    os: [win32]
+
   '@esbuild/win32-x64@0.18.20':
     resolution: {integrity: sha512-kTdfRcSiDfQca/y9QIkng02avJ+NCaQvrMejlsB3RRv5sE9rRoeBPISaZpKxHELzRxZyLvNts1P27W3wV+8geQ==}
     engines: {node: '>=12'}
@@ -729,7 +741,6 @@ packages:
 
   '@rollup/rollup-win32-ia32-msvc@4.19.2':
     resolution: {integrity: sha512-Mda7iG4fOLHNsPqjWSjANvNZYoW034yxgrndof0DwCy0D3FvTjeNo+HGE6oGWgvcLZNLlcp0hLEFcRs+UGsMLg==}
-    cpu: [ia32]
     os: [win32]
 
   '@rollup/rollup-win32-x64-msvc@4.19.2':
@@ -3077,6 +3088,8 @@ snapshots:
   '@esbuild/win32-ia32@0.21.5':
     optional: true
 
+  '@esbuild/win32-ia32@0.23.0': {}
+
   '@esbuild/win32-x64@0.18.20':
     optional: true
 
@@ -3211,8 +3224,7 @@ snapshots:
   '@rollup/rollup-win32-arm64-msvc@4.19.2':
     optional: true
 
-  '@rollup/rollup-win32-ia32-msvc@4.19.2':
-    optional: true
+  '@rollup/rollup-win32-ia32-msvc@4.19.2': {}
 
   '@rollup/rollup-win32-x64-msvc@4.19.2':
     optional: true

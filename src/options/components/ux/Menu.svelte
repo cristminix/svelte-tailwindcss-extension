@@ -33,7 +33,8 @@
           title = course[item.displayField as keyof TCourse] as string
           const pathFn = compile<ParamData>(item.childRoutePath)
           const courseParams: ParamData = Object.keys(course).reduce((params, key) => {
-            params[key] = course[key as keyof TCourse].toString()
+            const key2 = key as keyof TCourse
+            if (course[key2]) params[key] = course[key2].toString()
             return params
           }, {} as ParamData)
 

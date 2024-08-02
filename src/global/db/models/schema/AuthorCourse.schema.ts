@@ -29,4 +29,8 @@ export const CourseRelations = relations(CourseSchema, ({ many }) => ({
 export const AuthorRelations = relations(AuthorSchema, ({ many }) => ({
   AuthorCourseSchema: many(AuthorCourseSchema),
 }))
-export type TAuthorCourseSchema = InferModel<typeof AuthorCourseSchema>
+export type TAuthorCourse = InferModel<typeof AuthorCourseSchema>
+export type TAuthorCourseN = Partial<Pick<TAuthorCourse, "timestamp">> & Omit<TAuthorCourse, "timestamp">
+
+// interface for update record
+export type TAuthorCourseU = Partial<Omit<TAuthorCourse, "timestamp">>

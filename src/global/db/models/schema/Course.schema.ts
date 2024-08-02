@@ -6,8 +6,8 @@ export const CourseSchema = sqliteTable("course", {
   title: text("title").notNull(),
   slug: text("slug").notNull().unique(),
   duration: integer("duration").notNull(),
-  sourceCodeRepository: text("sourceCodeRepository").notNull(),
-  description: text("description").notNull(),
+  sourceCodeRepository: text("sourceCodeRepository"),
+  description: text("description"),
   urn: text("urn").notNull(),
   timestamp: text("timestamp")
     .default(sql`CURRENT_TIMESTAMP`)

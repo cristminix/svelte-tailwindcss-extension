@@ -11,3 +11,8 @@ export const AuthorSchema = sqliteTable("author", {
     .notNull(),
 })
 export type TAuthor = InferModel<typeof AuthorSchema>
+// interface for new record
+export type TAuthorN = Partial<Pick<TAuthor, "id" | "timestamp">> & Omit<TAuthor, "id" | "timestamp">
+
+// interface for update record
+export type TAuthorU = Partial<Omit<TAuthor, "id" | "timestamp">>

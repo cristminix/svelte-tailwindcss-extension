@@ -86,7 +86,7 @@ export class SqlDB {
     return this.ready
   }
   async commit() {
-    console.log(`saving sqljs to fs`)
+    // console.log(`saving sqljs to fs`)
     const arrBuffer = this.sqldb.export()
     const dbpath = this.getDbPath()
     try {

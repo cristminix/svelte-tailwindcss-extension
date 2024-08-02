@@ -43,6 +43,20 @@
       "when": 1722589278379,
       "tag": "0005_mixed_wolfsbane",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1722591745407,
+      "tag": "0006_sad_meltdown",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1722592396713,
+      "tag": "0007_wooden_blur",
+      "breakpoints": true
     }
   ]
 }

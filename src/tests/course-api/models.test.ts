@@ -2,7 +2,7 @@ import "fake-indexeddb/auto"
 
 import { loadJsonFile } from "../loadJsonFile"
 import type { CourseInfoInterface, TM3Rec } from "@/global/classes/types"
-import type { TCourse, TCourseN, TSection, TSectionN, TTocN } from "@/global/db/models/schema"
+import type { TCourse, TCourseN, TSection, TSectionN, TThumbnail, TThumbnailN, TTocN } from "@/global/db/models/schema"
 import { getCourseInfo } from "@/global/fn/course/legacy/parser/getCourseInfo"
 import { getCourseTocs } from "@/global/fn/course/legacy/parser/toc/getCourseTocs"
 import { SqlDB } from "@/global/classes/SqlDB"
@@ -14,6 +14,9 @@ import type MSection from "@/global/db/models/MSection"
 import { createSection } from "@/global/fn/course-api/section/createSection"
 import { createToc } from "@/global/fn/course-api/toc/createToc"
 import type MToc from "@/global/db/models/MToc"
+import type MThumbnail from "@/global/db/models/MThumbnail"
+import { createThumbnail } from "@/global/fn/course-api/thumbnail/createThumbnail"
+import { isTimeExpired } from "@/global/fn/course/isTimeExpired"
 const sqldb = new SqlDB()
 const dbStore = DBStore.getInstance()
 describe("Legacy Model test", async () => {
@@ -39,7 +42,8 @@ describe("Legacy Model test", async () => {
     const mCourse = dbStore.get<MCourse>("Course")
     const mSection = dbStore.get<MSection>("Section")
     const mToc = dbStore.get<MToc>("Toc")
-    const modelLoaded = mCourse && mSection && mToc
+    const mThumbnail = dbStore.get<MThumbnail>("Thumbnail")
+    const modelLoaded = mCourse && mSection && mToc && mThumbnail
     if (!modelLoaded) {
       console.error(`Failed to initialize models`)
       return
@@ -65,7 +69,7 @@ describe("Legacy Model test", async () => {
         console.error(`cant create course record`)
         return
       }
-      let tsections: TSection[] = []
+      let sectionRecs: TSection[] = []
       if (courseRec) {
         /*----------------------------------------------------------------------------------*/
         /* create sections */
@@ -94,9 +98,32 @@ describe("Legacy Model test", async () => {
                 sectionId,
               }
               let tocRec = await createToc(tocRow, mToc)
+              if (tocRec) {
+                /*----------------------------------------------------------------------------------*/
+                /* create toc thumbnail*/
+                /*----------------------------------------------------------------------------------*/
+                for (const thumbnail of toc.thumbnails) {
+                  const { size, url, expiresAt } = thumbnail
+                  const tocId = tocRec.id as number
+                  const kind = "toc"
+                  const thumbnailRow: TThumbnailN = {
+                    size,
+                    url,
+                    expiresAt: expiresAt.toString(),
+                    kind,
+                    parentId: tocId,
+                  }
+                  let thumbnailRec: TThumbnail | null = null
+                  if (!isTimeExpired(expiresAt)) {
+                    thumbnailRec = await createThumbnail(thumbnailRow, mThumbnail)
+                  } else {
+                    console.error(`not insert thumbnail becouse expired`)
+                  }
+                }
+              }
             }
             /*----------------------------------------------------------------------------------*/
-            /* create tocSection */
+            /* create tocSection not necessary since toc already have sectionId many <-- to one */
             /*----------------------------------------------------------------------------------*/
           }
           console.info({ sectionRec })
@@ -104,6 +131,33 @@ describe("Legacy Model test", async () => {
       }
 
       console.info({ courseRec })
+
+      /*----------------------------------------------------------------------------------*/
+      /* create course author */
+      /*----------------------------------------------------------------------------------*/
+
+      /*----------------------------------------------------------------------------------*/
+      /* create course thumbnail */
+      /*----------------------------------------------------------------------------------*/
+      const { thumbnails } = courseInfo
+      for (const thumbnail of thumbnails) {
+        const { size, url, expiresAt } = thumbnail
+        const tocId = courseRec.id as number
+        const kind = "course"
+        const thumbnailRow: TThumbnailN = {
+          size,
+          url,
+          expiresAt: expiresAt.toString(),
+          kind,
+          parentId: tocId,
+        }
+        let thumbnailRec: TThumbnail | null = null
+        if (!isTimeExpired(expiresAt)) {
+          thumbnailRec = await createThumbnail(thumbnailRow, mThumbnail)
+        } else {
+          console.error(`not insert thumbnail becouse expired`)
+        }
+      }
     }
   })
 })

@@ -3,7 +3,8 @@ import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core"
 
 export const ThumbnailSchema = sqliteTable("thumbnail", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  courseId: integer("courseId").notNull(),
+  kind: text("kind", { length: 10 }).notNull(),
+  parentId: integer("parentId").notNull(),
   size: text("size", { length: 50 }).notNull(),
   url: text("url").notNull(),
   expiresAt: text("expiresAt").notNull(),
@@ -11,4 +12,8 @@ export const ThumbnailSchema = sqliteTable("thumbnail", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 })
-export type TThumbnailSchema = InferModel<typeof ThumbnailSchema>
+export type TThumbnail = InferModel<typeof ThumbnailSchema>
+export type TThumbnailN = Partial<Pick<TThumbnail, "id" | "timestamp">> & Omit<TThumbnail, "id" | "timestamp">
+
+// interface for update record
+export type TThumbnailU = Partial<Omit<TThumbnail, "id" | "timestamp">>

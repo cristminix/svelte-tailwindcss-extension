@@ -1,8 +1,7 @@
 import type { SectionInterface, TM3Rec } from "@/global/classes/types"
-import { findProp } from "../../findProp"
 import { slugify } from "../../../slugify"
 import { findPropLegacy } from "@/content-scripts/inject/fn/legacy/findProp"
-import { getItemStar } from "../section/getItemStar"
+import { getTocItemStars } from "./getTocItemStars"
 
 export function getCourseSections(ds: TM3Rec, courseUrn: string) {
   const sections: SectionInterface[] = []
@@ -17,7 +16,7 @@ export function getCourseSections(ds: TM3Rec, courseUrn: string) {
         sectionsTmp = markup.__data.contentsDerived
       }
     } catch (e) {
-      //   return null
+      sectionsTmp = []
     }
     // console.log({ test: Object.keys(markup.__data.contentsDerived), courseUrn, sectionsTmp })
     for (const sectionTmp of sectionsTmp) {
@@ -26,8 +25,7 @@ export function getCourseSections(ds: TM3Rec, courseUrn: string) {
       if (subMarkup) {
         if (subMarkup.__data) {
           const sectionData = subMarkup.__data
-          let itemStars = getItemStar(sectionData)
-
+          let itemStars = getTocItemStars(sectionData)
           const section: SectionInterface = {
             title: sectionData.title,
             slug: slugify(sectionData.title),

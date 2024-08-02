@@ -87,6 +87,14 @@ export class SqlDB {
   }
   async commit() {
     console.log(`saving sqljs to fs`)
+    const arrBuffer = this.sqldb.export()
+    const dbpath = this.getDbPath()
+    try {
+      return await this.fs?.writeFileSync(dbpath, arrBuffer)
+    } catch (e) {
+      console.log(`lfs:error cant write ${dbpath}`, e)
+    }
+    return false
   }
   async init() {
     await this.initDirectory()

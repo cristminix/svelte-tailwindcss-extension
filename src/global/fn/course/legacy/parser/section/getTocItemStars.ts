@@ -1,10 +1,10 @@
-export function getItemStar(markup: any) {
+export function getTocItemStars(markup: any) {
   if (markup["*items"]) {
     return markup["*items"]
   }
   const itemStars: string[] = []
   // content v2
-  if (markup.items) {
+  if (Array.isArray(markup.items)) {
     const markupItems = markup.items
     // console.log({ markupItems })
     for (const markupItem of markupItems) {

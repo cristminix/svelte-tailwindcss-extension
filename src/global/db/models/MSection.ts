@@ -4,9 +4,11 @@ import DrizzleDB from "./DrizzleDB"
 
 class MSection extends DrizzleDB {
   schema = SectionSchema
-
-  getBySlug(slug: string, courseId: number) {
-    // return this.singleQuery({ query: { slug, courseId } })
+  async exists(slug: string, courseId: number) {
+    return (await this.count({ slug, courseId })) > 0
+  }
+  async getBySlug(slug: string, courseId: number) {
+    return await this.getRow({ slug, courseId })
   }
   get(id: number) {
     // return this.singleQuery({ query: { id } })

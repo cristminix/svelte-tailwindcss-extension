@@ -1,15 +1,18 @@
 import { TocSchema } from "./schema"
 // import DrizzleModelRw from "@/global/classes/DrizzleModelRw"
 import DrizzleDB from "./DrizzleDB"
+import { and, eq } from "drizzle-orm"
 
 class MToc extends DrizzleDB {
   schema = TocSchema
-
-  getListBySectionId(sectionId: number) {
-    // return this.query({ query: { sectionId } })
+  async exists(slug: string, sectionId: number) {
+    return (await this.count({ slug, sectionId })) > 0
   }
-  getBySlug(slug: string, sectionId: number) {
-    // return this.singleQuery({ query: { slug, sectionId } })
+  async getListBySectionId(sectionId: number) {
+    return await this.db.select().from(this.schema).where(eq(this.schema.sectionId, sectionId))
+  }
+  async getBySlug(slug: string, sectionId: number) {
+    return await this.getRow({ slug, sectionId })
   }
   get(id: string) {
     // return this.singleQuery({ query: { id } })

@@ -84,9 +84,9 @@ class DrizzleBaseModelRw {
   addQueryFilter(filter: any) {
     const allFields = Object.keys(this.schema)
     const fields = Object.keys(filter)
-    if (fields.length > 1) {
-      console.log(`Warning: filter field > 1 left is unused`)
-    }
+    // if (fields.length > 1) {
+    //   console.log(`Warning: filter field > 1 left is unused`)
+    // }
     let conditionArr = []
 
     for (const field of fields) {
@@ -108,7 +108,7 @@ class DrizzleBaseModelRw {
     if (likes.length > 0) return or.apply(this, likes)
     return null
   }
-  async count(filter = null, search = null) {
+  async count(filter: any = null) {
     let result = null
     if (this.isValidFilter(filter)) {
       let condition = this.addQueryFilter(filter)

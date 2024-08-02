@@ -12,8 +12,6 @@ export function getCourseMarkup(slug: string, ds: any) {
     })
     if (filteredRows.length > 0) {
       return filteredRows.pop()
-      // console.log({ row })
-      // const { title, duration, sourceCodeRepository, subtitle, slug, entityUrn, githubCodespace, exerciseFiles } = row
     }
   }
   return null

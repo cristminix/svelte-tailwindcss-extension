@@ -10,4 +10,9 @@ export const SectionSchema = sqliteTable("section", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 })
-export type TSectionSchema = InferModel<typeof SectionSchema>
+export type TSection = InferModel<typeof SectionSchema>
+// interface for new record
+export type TSectionN = Partial<Pick<TSection, "id" | "timestamp">> & Omit<TSection, "id" | "timestamp">
+
+// interface for update record
+export type TSectionU = Partial<Omit<TSection, "id" | "timestamp">>

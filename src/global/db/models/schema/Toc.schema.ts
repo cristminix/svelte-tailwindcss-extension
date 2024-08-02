@@ -10,4 +10,9 @@ export const TocSchema = sqliteTable("toc", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 })
-export type TTocSchema = InferModel<typeof TocSchema>
+export type TToc = InferModel<typeof TocSchema>
+// interface for new record
+export type TTocN = Partial<Pick<TToc, "id" | "timestamp">> & Omit<TToc, "id" | "timestamp">
+
+// interface for update record
+export type TTocU = Partial<Omit<TToc, "id" | "timestamp">>

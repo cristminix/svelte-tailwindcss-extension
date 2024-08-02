@@ -1,14 +1,14 @@
-import Fs from "@/global/classes/Fs"
 import { CourseSchema } from "./schema"
 // import DrizzleModelRw from "@/global/classes/DrizzleModelRw"
 import DrizzleDB from "./DrizzleDB"
 
 class MCourse extends DrizzleDB {
   schema = CourseSchema
-
-  getBySlug(slug: string) {
-    // const results = this.db.queryAll(this.table, { query: { slug } });
-    // return this.singleResult(results)
+  async exists(slug: string) {
+    return (await this.count({ slug })) > 0
+  }
+  async getBySlug(slug: string) {
+    return await this.getRow({ slug })
   }
   async getLastSlug() {
     /*const mApp = await App.getInstance()

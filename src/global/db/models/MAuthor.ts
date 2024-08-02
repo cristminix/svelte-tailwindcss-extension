@@ -1,4 +1,3 @@
-import Fs from "@/global/classes/Fs"
 import { AuthorSchema } from "./schema"
 import DrizzleDB from "./DrizzleDB"
 

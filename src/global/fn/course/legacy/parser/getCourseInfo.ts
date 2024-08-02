@@ -8,19 +8,25 @@ import { getCourseGithubCodespace } from "./course/getCourseGithubCodespace"
 import { getCourseExerciseFiles } from "./course/getCourseExerciseFiles"
 import { getCourseSubtitle } from "./course/getCourseSubtitle"
 import { getCourseDescription } from "./course/getCourseDescription"
-import { getCourseAuthor } from "./course/getCourseAuthor"
 import { getCourseAuthors } from "./course/getCourseAuthors"
-import { getCourseSections } from "./course/getCourseSections"
+import { getCourseSections } from "./section/getCourseSections"
+import { getCourseThumbnails } from "./course/getCourseThumbnails"
+import { getCourseTimestamp } from "./course/getCourseTimestamp"
 
-export function getCourseInfo(ds: TM3Rec, slug: string): CourseInfoInterface | null {
+function getCourseMarkup(ds: any, slug: string) {
   const rows = getDsRecordsByType("com.linkedin.learning.api.deco.content.Course", ds)
   let markup: any
-  let courseInfo: CourseInfoInterface | null = null
 
   const filteredRow = rows.find((row) => row?.slug === slug)
   if (filteredRow) {
     markup = filteredRow
   }
+  return markup
+}
+export function getCourseInfo(ds: TM3Rec, slug: string): CourseInfoInterface | null {
+  const markup = getCourseMarkup(ds, slug)
+  // console.log({ markup })
+  let courseInfo: CourseInfoInterface | null = null
 
   if (markup) {
     const title = getCourseTitle(markup)
@@ -33,6 +39,8 @@ export function getCourseInfo(ds: TM3Rec, slug: string): CourseInfoInterface | n
     const description = getCourseDescription(markup)
     const authors = getCourseAuthors(ds)
     const sections = getCourseSections(ds, entityUrn)
+    const thumbnails = getCourseThumbnails(markup)
+    const timestamp = getCourseTimestamp(markup)
     // console.log({ authors, exerciseFiles, sections })
     courseInfo = {
       title,
@@ -46,6 +54,8 @@ export function getCourseInfo(ds: TM3Rec, slug: string): CourseInfoInterface | n
       description,
       authors,
       sections,
+      thumbnails,
+      timestamp,
     }
   }
   return courseInfo

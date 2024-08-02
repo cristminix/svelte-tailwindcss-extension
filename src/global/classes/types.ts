@@ -59,6 +59,11 @@ export interface ThumbnailInterface {
 export interface TocInterface {
   title: string
   slug: string
+  duration: number
+  itemStar: string
+  vStatusUrn: string
+  visibility: string
+  thumbnails: ThumbnailInterface[]
   streamLocations: StreamLocationInterface[]
 }
 export interface TranscriptInterface {
@@ -69,14 +74,16 @@ export interface TranscriptInterface {
 }
 export interface CourseInfoInterface {
   title: string
-  duration: string
+  duration: number
   sourceCodeRepository: string
   subtitle: string
   slug: string
   urn: string
   githubCodespace: string
   exerciseFiles: ExerciseFileInterface[]
+  thumbnails: ThumbnailInterface[]
   description: string
   authors: AuthorInterface[]
   sections: SectionInterface[]
+  timestamp: string | null
 }

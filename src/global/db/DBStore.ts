@@ -67,9 +67,9 @@ class DBStore {
   onReady(callback: ReadyCallbackFn) {
     this.onReadyCallbacks.push(callback)
   }
-  get(key: string): DrizzleDB | undefined {
+  get<T>(key: string): T | undefined {
     const modelKey = `m${key}`
-    return (this as any)[modelKey] as DrizzleDB | undefined
+    return (this as any)[modelKey] as T | undefined
   }
 }
 

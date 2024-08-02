@@ -1,7 +1,7 @@
-import { getDsRecordsByType } from "@/global/fn/course/legacy/getDsRecordsByType"
 import { loadJsonFile } from "../loadJsonFile"
-import type { TM3Rec } from "@/global/classes/types"
+import type { CourseInfoInterface, TM3Rec } from "@/global/classes/types"
 import { getCourseInfo } from "@/global/fn/course/legacy/parser/getCourseInfo"
+import { getCourseTocs } from "@/global/fn/course/legacy/parser/toc/getCourseTocs"
 
 describe("Legacy Api test", () => {
   it("should be able to parse legacy m3rec data", async () => {
@@ -16,10 +16,11 @@ describe("Legacy Api test", () => {
     const courseSlug = "project-management-foundations-15528659"
     const ds = await loadJsonFile<TM3Rec>("legacy-m3rec.json")
     // console.log(ds)
-    const courseInfo = getCourseInfo(ds, courseSlug)
+    const courseInfo: CourseInfoInterface | null = getCourseInfo(ds, courseSlug)
     if (courseInfo) {
-      const { sections } = courseInfo
-      console.info({ sectionStars: sections[0].itemStars })
+      const { sections, thumbnails } = courseInfo
+      const tocs = getCourseTocs(ds, sections[0].itemStars)
+      console.info({ thumbnails, tocs })
     }
   })
 })

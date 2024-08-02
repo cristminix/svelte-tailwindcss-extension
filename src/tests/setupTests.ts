@@ -2,6 +2,8 @@
 
 import { vi } from "vitest"
 import { initSqlJs } from "./initSqlJs"
+import { commitDatabase } from "./commitDatabase"
+import { crc32Id } from "@/global/fn/crc32Id"
 // Mock the webextension-polyfill module
 vi.mock("webextension-polyfill", () => {
   return {
@@ -28,7 +30,9 @@ beforeEach(async () => {
   //   console.log("Before each test")
 })
 
-afterEach(() => {
+afterEach(async () => {
   // Code to run after each test
   //   console.log("After each test")
+  const hash = "backed-up-020824" //crc32Id(new Date().getTime().toString())
+  await commitDatabase(`backup-${hash}.db`)
 })

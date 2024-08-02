@@ -4,7 +4,7 @@ import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core"
 export const CourseSchema = sqliteTable("course", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
-  slug: text("slug").notNull(),
+  slug: text("slug").notNull().unique(),
   duration: integer("duration").notNull(),
   sourceCodeRepository: text("sourceCodeRepository").notNull(),
   description: text("description").notNull(),
@@ -14,3 +14,8 @@ export const CourseSchema = sqliteTable("course", {
     .notNull(),
 })
 export type TCourse = InferModel<typeof CourseSchema>
+// interface for new record
+export type TCourseN = Partial<Pick<TCourse, "id" | "timestamp">> & Omit<TCourse, "id" | "timestamp">
+
+// interface for update record
+export type TCourseU = Partial<Omit<TCourse, "id" | "timestamp">>

@@ -1,7 +1,7 @@
 import { type InferModel, sql } from "drizzle-orm"
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core"
 
-export const QStateSchema = sqliteTable("qstate", {
+export const QStateSchema = sqliteTable("qState", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   courseId: integer("courseId").notNull(),
   tocId: integer("tocId").notNull(),
@@ -9,14 +9,14 @@ export const QStateSchema = sqliteTable("qstate", {
   state: text("state").notNull(),
   result: text("result").notNull(),
   mState: text("mState").notNull(),
-  mSesult: text("mResult").notNull(),
+  mResult: text("mResult").notNull(),
   mLoaded: integer("mLoaded").notNull(),
   mSize: integer("mSize").notNull(),
   tState: text("tState").notNull(),
-  tSesult: text("tResult").notNull(),
+  tResult: text("tResult").notNull(),
   tLoaded: integer("tLoaded").notNull(),
   tSize: integer("tSize").notNull(),
-  dtStart: text("dtState").notNull(),
+  dtStart: text("dtStart").notNull(),
   dtEnd: text("dtEnd").notNull(),
 
   timestamp: text("timestamp")

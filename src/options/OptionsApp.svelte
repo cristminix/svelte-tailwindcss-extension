@@ -18,6 +18,8 @@
   import DBStore from "@/global/db/DBStore"
   import type MSetting from "@/global/db/models/MSetting"
   import FileManagerPage from "./pages/FileManagerPage.svelte"
+  import DBExplorer from "./pages/db-explorer/DBExplorer.svelte"
+  import DBTableManager from "./pages/db-explorer/DBTableManager.svelte"
 
   let routeApp: SvelteComponent
   let queryString = writable<string | null>(null)
@@ -44,6 +46,8 @@
     "/course/display/:id/:slug": CourseDisplayPage,
     "/course/add/:slug": AddCoursePage,
     "/file-manager": FileManagerPage,
+    "/database/table-manager": DBTableManager,
+    "/database/explore/:table": DBExplorer,
   }
 
   let page: any

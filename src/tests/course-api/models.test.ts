@@ -34,7 +34,7 @@ describe("Legacy Model test", async () => {
     /* load legacy api course mock data */
     /*----------------------------------------------------------------------------------*/
     const slugKeys = Object.keys(dumps)
-    const courseSlug = slugKeys[2]
+    const courseSlug = slugKeys[0]
     const ds = await loadJsonFile<TM3Rec>(dumps[courseSlug])
     // console.log(ds)
     const courseInfo: CourseInfoInterface | null = getCourseInfo(ds, courseSlug)

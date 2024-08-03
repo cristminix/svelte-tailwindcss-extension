@@ -8,7 +8,7 @@ export const DMStatusSchema = sqliteTable("dmStatus", {
   metaStatus: text("metaStatus").notNull(),
   videoStatus: text("videoStatus").notNull(),
   captionStatus: text("captionStatus").notNull(),
-  dtMetaStart: text("dsMetaStart").notNull(),
+  dtMetaStart: text("dtMetaStart").notNull(),
   dtVideoStart: text("dtVideoStart"),
   dtCaptionStart: text("dtCaptionStart"),
   dtMetaEnd: text("dtMetaEnd"),

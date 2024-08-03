@@ -1,5 +1,7 @@
 <script lang="ts">
-  export let options: any
+  import type { GridOptionsInterface } from "./types"
+
+  export let options: GridOptionsInterface
   //   const tableCls = "min-w-full divide-y divide-gray-200 dark:divide-gray-700"
   const tableHeaderCls = "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
   const numberWidthCls = options.numberWidthCls || ""
@@ -13,6 +15,7 @@
         realCaption = options.callbackHeaders[field](field, index, options.fields)
       }
     }
+    return realCaption
   }
 </script>
 
@@ -24,5 +27,7 @@
 
     <th scope="col" class={`${tableHeaderWidthCls} ${tableHeaderCls}`}>{realCaption}</th>
   {/each}
+  {#if options.enableActions}
   <th scope="col" class={`${actionWidthCls} ${tableHeaderCls}`}>Action</th>
+  {/if}
 </tr>

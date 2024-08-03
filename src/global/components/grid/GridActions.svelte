@@ -13,7 +13,8 @@
   //   }
   const linkTo = typeof options.editUrl == "function" ? options.editUrl(item) : options.editUrl
 </script>
-
+{#if options.enableEdit}
 <Link routeApp={options.routeApp} className={linkCls} to={linkTo}>
   <i class="bi bi-pencil-square"></i> Edit
 </Link>
+{/if}

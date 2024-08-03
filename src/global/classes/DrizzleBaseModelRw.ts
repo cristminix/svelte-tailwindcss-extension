@@ -1,4 +1,4 @@
-import { drizzle } from "drizzle-orm/sql-js"
+import { drizzle, type SQLJsDatabase } from "drizzle-orm/sql-js"
 import { count, eq, and, asc, desc, like, or } from "drizzle-orm"
 import { calculateTotalPages } from "@/global/fn/calculateTotalPages"
 import { calculateOffset } from "@/global/fn/calculateOffset"
@@ -8,7 +8,7 @@ import * as schema from "../db/models/schema"
 class DrizzleBaseModelRw {
   pk: string = "id"
   schema: any | null = null
-  db: any = null
+  db: SQLJsDatabase<typeof this.schema> | null = null
   logger: any = null
   searchFields: any[] = []
   defaultOrder: any

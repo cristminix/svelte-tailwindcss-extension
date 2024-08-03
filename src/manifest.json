@@ -23,6 +23,7 @@
       "matches": ["https://www.linkedin.com/*", "http://localhost:5173/*", "http://127.0.0.1:5173/*"]
     }
   ],
+  "{{firefox}}.permissions": ["tabs", "activeTab", "storage", "http://localhost/*", "https://www.linkedin.com/*"],
   "{{chrome}}.permissions": ["scripting", "storage", "webNavigation", "tabs"],
 
   "{{chrome}}.action": {

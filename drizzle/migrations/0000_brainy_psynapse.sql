@@ -30,7 +30,7 @@ CREATE TABLE `dmStatus` (
 	`metaStatus` text NOT NULL,
 	`videoStatus` text NOT NULL,
 	`captionStatus` text NOT NULL,
-	`dsMetaStart` text NOT NULL,
+	`dtMetaStart` text NOT NULL,
 	`dtVideoStart` text,
 	`dtCaptionStart` text,
 	`dtMetaEnd` text,
@@ -60,7 +60,7 @@ CREATE TABLE `dmSetup` (
 	`timestamp` text DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `qstate` (
+CREATE TABLE `qState` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`courseId` integer NOT NULL,
 	`tocId` integer NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE `qstate` (
 	`tResult` text NOT NULL,
 	`tLoaded` integer NOT NULL,
 	`tSize` integer NOT NULL,
-	`dtState` text NOT NULL,
+	`dtStart` text NOT NULL,
 	`dtEnd` text NOT NULL,
 	`timestamp` text DEFAULT CURRENT_TIMESTAMP NOT NULL
 );

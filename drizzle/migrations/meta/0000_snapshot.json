@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "f0cd5160-d0c3-41d5-8cc3-ad3c7cbd5a19",
+  "id": "3a42a9d3-307f-4bd9-89f2-0ffec24f208d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "app": {
@@ -199,8 +199,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "dsMetaStart": {
-          "name": "dsMetaStart",
+        "dtMetaStart": {
+          "name": "dtMetaStart",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -391,8 +391,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "qstate": {
-      "name": "qstate",
+    "qState": {
+      "name": "qState",
       "columns": {
         "id": {
           "name": "id",
@@ -492,8 +492,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "dtState": {
-          "name": "dtState",
+        "dtStart": {
+          "name": "dtStart",
           "type": "text",
           "primaryKey": false,
           "notNull": true,

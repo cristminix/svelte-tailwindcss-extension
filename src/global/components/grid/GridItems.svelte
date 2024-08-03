@@ -33,10 +33,10 @@
         options.editors[fieldIndex]
       } catch (e) {}
       // console.log(item)
-      fieldText = options.editorFactory(editor, field, value, item, index, fieldIndex)
+      if (options.editorFactory) fieldText = options.editorFactory(editor, field, value, item, index, fieldIndex)
       return fieldText
     }
-    return field
+    return fieldText
   }
   function recordNumber(index: number) {
     const p = index + 1
@@ -68,12 +68,13 @@
         {@const fieldText = getFieldText(field, fieldIndex, item, index)}
         <td class={tdCls}>{fieldText}</td>
       {/each}
-
+      {#if options.enableActions}
       <td class={tdCls2}>
         <div class="flex items-center gap-1">
           <GridActions {options} {index} {item} {linkCls} />
         </div>
       </td>
+      {/if}
     </tr>
   {/each}
 {/if}

@@ -34,10 +34,14 @@ export default defineConfig({
     webExtension({
       // disableAutoLaunch:true,
       manifest: generateManifest,
+      skipManifestValidation: true,
       browser: "firefox",
       watchFilePaths: ["package.json", "manifest.json"],
       webExtConfig: {
+        firefox: "C:\\Program Files (x86)\\Mozilla Firefox ESR\\firefox.exe",
         startUrl: "https://www.linkedin.com/learning",
+        keepProfileChanges: true,
+        firefoxProfile: "default-esr-1",
       },
     }),
   ],

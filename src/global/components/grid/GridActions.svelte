@@ -1,6 +1,8 @@
 <script lang="ts">
   import Link from "../ux/Link.svelte"
-  export let options: any
+import type { GridOptionsInterface } from '@/global/components/grid/types';
+
+  export let options: GridOptionsInterface
   export let item
   export let index
   export let linkCls

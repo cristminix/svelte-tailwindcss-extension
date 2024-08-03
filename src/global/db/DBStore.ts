@@ -31,9 +31,10 @@ const models = {
   AuthorCourse: MAuthorCourse,
 } as const
 
-type ModelKeys = keyof typeof models
+export type ModelKeys = keyof typeof models
 
-type ReadyCallbackFn = (dbStore: DBStore) => void
+export type ReadyCallbackFn = (dbStore: DBStore) => void
+
 class DBStore {
   ready: boolean = false
   models: DrizzleDB[] = []

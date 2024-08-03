@@ -39,8 +39,10 @@
     return [path, queryString]
   }
   let routeChangeCallbacks: any = {}
-  export const addRouteChangeCallback = (callback: any, key: string) => {
+  let routeChangeCallbacksKeep: any = {}
+  export const addRouteChangeCallback = (callback: any, key: string, keep = false) => {
     routeChangeCallbacks[key] = callback
+    routeChangeCallbacksKeep[key] = keep
   }
   export let onRouteChange = (path: string, queryString: string | null) => {
     console.log(path, queryString)

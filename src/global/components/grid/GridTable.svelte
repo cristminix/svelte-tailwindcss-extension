@@ -16,9 +16,9 @@
 
   const emptyRecords = records ? (records.length > 0 ? false : true) : false
 
-  // onMount(() => {
-    // console.log(records)
-  // })
+  onMount(() => {
+    console.log(records)
+  })
 </script>
 
 <div class="block h-screen">

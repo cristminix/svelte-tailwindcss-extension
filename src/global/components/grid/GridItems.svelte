@@ -18,6 +18,7 @@
 
   function getFieldText(field: string, fieldIndex: number, item: any, index: number) {
     let value = item[field]
+    console.log({ item, value })
     try {
       value = typeof value == "object" ? JSON.stringify(value) : value.toString()
     } catch (e) {}
@@ -33,7 +34,7 @@
         options.editors[fieldIndex]
       } catch (e) {}
       // console.log(item)
-      if (options.editorFactory) fieldText = options.editorFactory(editor, field, value, item, index, fieldIndex)
+      // if (options.editorFactory) fieldText = options.editorFactory(editor, field, value, item, index, fieldIndex)
       return fieldText
     }
     return fieldText
@@ -69,11 +70,11 @@
         <td class={tdCls}>{fieldText}</td>
       {/each}
       {#if options.enableActions}
-      <td class={tdCls2}>
-        <div class="flex items-center gap-1">
-          <GridActions {options} {index} {item} {linkCls} />
-        </div>
-      </td>
+        <td class={tdCls2}>
+          <div class="flex items-center gap-1">
+            <GridActions {options} {index} {item} {linkCls} />
+          </div>
+        </td>
       {/if}
     </tr>
   {/each}

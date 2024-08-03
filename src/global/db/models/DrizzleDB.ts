@@ -6,26 +6,27 @@ class DrizzleDB extends DrizzleModelRw {
   dir = "/db"
 
   async getTableSize(tableName: string) {
-    let counts=0
-    let size=0
+    let counts = 0
+    let size = 0
 
-    if (this.db) {      
-      let {rowCount} = this.db.get(sql`select count(*) as rowCount from ${this.schema}`)
+    if (this.db) {
+      let { rowCount } = this.db.get(sql`select count(*) as rowCount from ${this.schema}`) as any
       const allFields = Object.keys(this.schema)
       const sqlStr = `LENGTH(${allFields.join(") + LENGTH(")})`
-      const statement2 = sql`SELECT ${sqlStr} AS row_size FROM ${this.schema} LIMIT 10;`
-      const db = this.sqldb.getSqlDB() 
-      const result = db.exec(`SELECT ${sqlStr} AS row_size FROM ${tableName} LIMIT 10`)
-      if(rowCount)
-        counts = rowCount
-      if(rowCount && result.length > 0){
-          let totalRowSize = result[0].values.reduce((sum, row) => sum + row[0], 0);
-          let avgRowSize = totalRowSize / result[0].values.length;
+
+      if (this.sqldb) {
+        const db = this.sqldb.getSqlDB()
+        const result = db.exec(`SELECT ${sqlStr} AS row_size FROM ${tableName} LIMIT 10`)
+        if (rowCount) counts = rowCount
+        if (rowCount && result.length > 0) {
+          let totalRowSize = result[0].values.reduce((sum: number, row: any) => sum + row[0], 0)
+          let avgRowSize = totalRowSize / result[0].values.length
           let estimatedTableSize = rowCount * avgRowSize
-        size = !isNaN(estimatedTableSize)?estimatedTableSize:0 
+          size = estimatedTableSize && !isNaN(estimatedTableSize) ? estimatedTableSize : 0
+        }
       }
     }
-    return {counts,size}
+    return { counts, size }
   }
   async getDataSize() {
     const table = getTableName(this.schema)

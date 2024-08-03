@@ -9,7 +9,7 @@
   import type { GridOptionsInterface, IGridData } from "@/global/components/grid/types"
   import { writable } from "svelte/store"
   import DBStore from "@/global/db/DBStore"
-  import RoutesApp from "@/options/components/RoutesApp.svelte"
+  import type RoutesApp from "@/options/components/RoutesApp.svelte"
   import type DrizzleDB from "@/global/db/models/DrizzleDB"
 
   export let store: DBStore
@@ -21,7 +21,7 @@
   interface TRowData {
     table: string
     desc: string
-    size: number
+    size: string
     counts: number
   }
 
@@ -71,21 +71,20 @@
     routeApp,
     numberWidthCls: "",
     actionWidthCls: "",
-    widthCls: ["1/4", "3/4","3/4"],
-    headers: ["Table Name",   "Table Size", "Row Counts"],
-    fields: ["table",  "size", "counts"],
+    widthCls: ["1/4", "3/4", "3/4"],
+    headers: ["Table Name", "Table Size", "Row Counts"],
+    fields: ["table", "size", "counts"],
     enableEdit: false,
-    enableActions:false,
+    enableActions: false,
     callbackActions: {
-      edit: (item, index, options, linkCls, gridAction) => {
-        return ''
-      },
+      // edit: (item:, index, options, linkCls, gridAction) => {
+      //   return ''
+      // },
     },
   }
 
-
   const getTableSize = async (table: string) => {
-    let result :any
+    let result: any
     if (table == "PrxCache") {
       // sSize = 0 //await store.get("PrxCache").getSize()
     } else {
@@ -95,7 +94,7 @@
         result = await model.getDataSize()
       }
     }
-    return result?result:{counts:0,size:0}
+    return result ? result : { counts: 0, size: 0 }
   }
 
   const updateList = async () => {
@@ -107,12 +106,12 @@
     for (const table of schema.availables) {
       const desc = ""
       const result = await getTableSize(table)
-      const {size,counts} = result
-      const item: TRowData = { table, desc, size:formatBytes(size), counts }
+      const { size, counts } = result
+      const item: TRowData = { table, desc, size: formatBytes(size), counts }
       newGrid.records.push(item)
       tableSize += size
     }
-    storageSz.update((o)=>formatBytes(tableSize))
+    storageSz.update((o) => formatBytes(tableSize))
     setTimeout(() => {
       grid.update((o) => newGrid)
       loading.update((o) => false)
@@ -149,9 +148,8 @@
     updateList()
   })
   onMount(() => {
-    if(store.isReady()){
-    updateList()
-
+    if (store.isReady()) {
+      updateList()
     }
   })
 

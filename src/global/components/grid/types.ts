@@ -14,8 +14,15 @@ export interface GridOptionsInterface {
   enableEdit: boolean
   callbackActions?: any
   callbackHeaders?: any
-  enableActions?:boolean
-  editorFactory?: (editor: any, field: string, value: any, item: any, index: number, fieldIndex: number) => any
+  enableActions?: boolean
+  editorFactory?: (
+    editor: any,
+    field: string,
+    value: any,
+    item: any,
+    index: number,
+    fieldIndex: number,
+  ) => any
 }
 
 export interface GridActionsInterface {

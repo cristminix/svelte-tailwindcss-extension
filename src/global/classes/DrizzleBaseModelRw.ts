@@ -8,7 +8,7 @@ import * as schema from "../db/models/schema"
 class DrizzleBaseModelRw {
   pk: string = "id"
   schema: any | null = null
-  db: SQLJsDatabase<typeof this.schema> | null = null
+  db: any //SQLJsDatabase<typeof this.schema>
   logger: any = null
   searchFields: any[] = []
   defaultOrder: any
@@ -112,12 +112,14 @@ class DrizzleBaseModelRw {
     let result = null
     if (this.isValidFilter(filter)) {
       let condition = this.addQueryFilter(filter)
-      result = await this.db
-        .select({ count: count(this.schema.id) })
-        .from(this.schema)
-        .where(condition)
-      const [row] = result
-      if (row) return row.count
+      if (this.db) {
+        result = await this.db
+          .select({ count: count(this.schema.id) })
+          .from(this.schema)
+          .where(condition)
+        const [row] = result
+        if (row) return row.count
+      }
       return 0
     }
 

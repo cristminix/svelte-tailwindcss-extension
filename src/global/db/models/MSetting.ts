@@ -17,14 +17,17 @@ class MSetting extends DrizzleDB {
   }
   async set(key: string, value: any, kind: string = "string") {
     const record = await this.getRow({ key })
+    let result: any = null
     if (record) {
       console.log(`MSetting.set update record`)
-      return await this.db.update(this.schema).set({ value }).where(eq(this.schema["key"], key))
+      if (this.db) result = await this.db.update(this.schema).set({ value }).where(eq(this.schema["key"], key))
     } else {
       console.log(`MSetting.set create new record`, { key, value, kind })
 
-      await this.create({ key, value, kind })
+      result = await this.create({ key, value, kind })
     }
+    await this.commit()
+    return result
   }
 }
 

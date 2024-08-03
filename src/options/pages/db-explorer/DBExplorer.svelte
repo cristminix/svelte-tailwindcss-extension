@@ -1,6 +1,6 @@
 <script lang="ts">
   import { makeDelay } from "@/global/fn/makeDelay"
-  import { onMount, beforeUpdate } from "svelte"
+  import { onMount, beforeUpdate, afterUpdate } from "svelte"
   // import DBEditorBoolean from "./db-editor/DBEditorBoolean.svelte";
   // import DBEditorInteger from "./db-editor/DBEditorInteger.svelte";
   // import DBEditorObject from "./db-editor/DBEditorObject.svelte";
@@ -11,82 +11,82 @@
   import config from "./config.json"
   import GridTable from "@/global/components/grid/GridTable.svelte"
   import Pager from "@/global/components/grid/Pager.svelte"
-  import type { GridOptionsInterface } from "@/global/components/grid/types"
+  import type { GridOptionsInterface, IGridData } from "@/global/components/grid/types"
+  import { writable } from "svelte/store"
+  import type DrizzleDB from "@/global/db/models/DrizzleDB"
+  import type DBStore from "@/global/db/DBStore"
+  import { methods } from "underscore"
 
-  export let store
-  export let table
-  export let page
+  export let store: DBStore
+  // export let table
+  export let page: number
   export let routeApp: any
+  export let params: any
+  const loading = writable(false)
 
-  let model: any = null
-  let conf: any = null
+  const conf = writable<any>(null)
   let errorMessage = ""
   let projectList: any[] = []
   let editorFactoryRefs: any = {}
-  let grid = {
+  let grid = writable<IGridData>({
     records: [],
     limit: 5,
     page: 1,
-    total_pages: 0,
-    total_records: 0,
-    order_by: "key",
-    order_dir: "asc",
-  }
-
+    totalPages: 0,
+    totalRecords: 0,
+    orderBy: "key",
+    orderDir: "asc",
+  })
+  const model = writable<DrizzleDB | null>(null)
+  let table = writable<string | null>(null)
   const delay = makeDelay(256)
 
   const updateList = async (pageNumber: number) => {
     let nGrid = {
       records: [],
     }
-    grid = {
-      ...grid,
-      ...nGrid,
-    }
-    await delay(() => {
-      nGrid = {
-        records: model[conf.listMethod](),
-      }
-      grid = {
-        ...grid,
-        ...nGrid,
+    grid.update((o) => ({ ...$grid, ...nGrid }))
+    console.log("update list called")
+    loading.update((o) => true)
+    delay(async () => {
+      if ($conf) {
+        const method = $conf.listMethod as keyof DrizzleDB
+        if ($model) {
+          ;(nGrid = await $model[method]()),
+            // console.log(nGrid)
+            grid.update((o) => ({ ...$grid, ...nGrid }))
+          loading.update((o) => false)
+        } else {
+          console.log($model)
+        }
       }
     })
   }
 
-  onMount(() => {
-    if (table) {
-      setModelAndConf()
-    }
-  })
-
-  beforeUpdate(() => {
-    if (model) {
-      updateList(page ?? 1)
-    } else {
-      errorMessage = "No Model Set"
-    }
-  })
-
-  const setModelAndConf = () => {
-    model = null
-    conf = null
+  const setModelAndConf = (table: string) => {
+    loading.update((o) => true)
+    // model = null
+    // conf = null
     const tables = config.tables as any
-    const tableConf = tables[table]
+    const tableConf = tables[$table as keyof typeof tables]
+    // console.log({ tables, tableConf, table: $table })
     if (tableConf) {
       const modelName = tableConf.model
-      const modelSet = store.get(modelName)
-      conf = tableConf
-      model = modelSet
+      // console.log(modelName)
+      const modelSet = store.get<DrizzleDB>(modelName)
+      // console.log(modelSet)
+      conf.update((o) => tableConf)
+      if (modelSet) model.update((o) => modelSet)
     } else {
       errorMessage = `No config set for ${table} table`
     }
+    loading.update((o) => false)
   }
 
   const onRefresh = async (e: any, setLoading: any) => {
-    setLoading(true)
-    await updateList(grid.page)
-    setLoading(false)
+    loading.update((o) => true)
+    await updateList($grid.page)
+    loading.update((o) => false)
   }
 
   const editorFactory = (editor: any, field: any, value: any, item: any, index: number, fieldIndex: number) => {
@@ -135,7 +135,7 @@
     */
   }
 
-  const gridOptions: GridOptionsInterface = {
+  const gridOptions = writable<GridOptionsInterface>({
     routeApp,
     numberWidthCls: "",
     actionWidthCls: "",
@@ -143,7 +143,7 @@
     headers: ["Setting", "Value"],
     fields: ["key", "value"],
     enableEdit: true,
-    callbackFields: {},
+    // callbackFields: {},
     useAutoEditor: true,
     callbackActions: {
       edit: (item: any, index: number, options: any, linkCls: string, gridAction: any) => {
@@ -164,33 +164,68 @@
           */
       },
     },
+  })
+
+  model.subscribe((value) => {
+    if (value) {
+      const nGridOptions = $gridOptions
+      if ($conf) {
+        nGridOptions.routeApp = routeApp
+        nGridOptions.headers = $conf.headers
+        nGridOptions.fields = $conf.fields
+        nGridOptions.editors = $conf.editors
+      }
+      nGridOptions.editorFactory = editorFactory
+      console.log(nGridOptions)
+      gridOptions.update((o) => ({ ...o, ...nGridOptions }))
+    }
+  })
+
+  function entryPoint() {
+    if (params.table) {
+      table.update((o) => params.table)
+    }
   }
 
-  if (model) {
-    gridOptions.headers = conf.headers
-    gridOptions.fields = conf.fields
-    gridOptions.editors = conf.editors
-    gridOptions.editorFactory = editorFactory
+  function init(table: string | null = null) {
+    if (table) {
+      setModelAndConf(table)
+      updateList(1)
+    }
   }
+  table.subscribe((value) => {
+    init(value)
+  })
+  onMount(() => {
+    entryPoint()
+  })
+  afterUpdate(() => {
+    // console.log(`before update`)
+    entryPoint()
+  })
 </script>
 
 {#if model}
-  <div class="border mb-2 rounded-xl shadow-sm p-6 dark:bg-gray-800 dark:border-gray-700" id={`db-table-explorer-${table}`}>
-    <div class="flex flex-col">
-      <div
-        class="-m-1.5 overflow-x-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500"
-      >
-        <div class="p-1.5 min-w-full inline-block align-middle">
-          <div>
-            <GridTable options={gridOptions} records={grid.records} page={grid.page} limit={grid.limit} />
+  {#if $loading}
+    Loading ....
+  {:else}
+    <div class="  my-4 border mb-2 rounded-xl shadow-sm p-6 dark:bg-gray-800 dark:border-gray-700" id={`db-table-explorer-${table}`}>
+      <div class="flex flex-col">
+        <div
+          class="-m-1.5 overflow-x-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500"
+        >
+          <div class="p-1.5 min-w-full inline-block align-middle">
+            <div>
+              <GridTable options={$gridOptions} records={$grid.records} page={$grid.page} limit={$grid.limit} />
+            </div>
           </div>
         </div>
-      </div>
-      <div class="pager-container mt-3">
-        <Pager path={`/database/${table}`} page={grid.page} total_pages={grid.total_pages} limit={grid.limit} {onRefresh} />
+        <div class="pager-container mt-3">
+          <Pager path={`/database/${table}`} page={$grid.page} total_pages={$grid.totalPages} limit={$grid.limit} {onRefresh} />
+        </div>
       </div>
     </div>
-  </div>
+  {/if}
 {:else}
   {errorMessage}
 {/if}

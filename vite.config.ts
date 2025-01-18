@@ -38,10 +38,11 @@ export default defineConfig({
       browser: "firefox",
       watchFilePaths: ["package.json", "manifest.json"],
       webExtConfig: {
-        firefox: "C:\\Program Files (x86)\\Mozilla Firefox ESR\\firefox.exe",
+        firefox: "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
         startUrl: "https://www.linkedin.com/learning",
         keepProfileChanges: true,
-        firefoxProfile: "default-esr-1",
+        firefoxProfile: "default-release",
+        target:"firefox-desktop"
       },
     }),
   ],

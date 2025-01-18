@@ -34,6 +34,7 @@ export default defineConfig({
 ```
 you must properly set `firefox` with valid firefox path and `firefoxProfile` as a valid firefox profile , valid profile can be found in `%APPDATA%\Roaming\Mozilla\Firefox\Profiles`
 
+![Firefox Profile Dir](screenshoot/firefox-profile.png?raw=true "Firefox Profile Dir")
 # Running The Project
 Open `cmd` then run this commands
 
@@ -53,3 +54,4 @@ Open another `cmd` then run this command
 ```
 
 When firefox opened then reload the page.
+![Running Project](screenshoot/running-project.png?raw=true "Running Project")

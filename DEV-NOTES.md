@@ -55,3 +55,11 @@ Open another `cmd` then run this command
 
 When firefox opened then reload the page.
 ![Running Project](screenshoot/running-project.png?raw=true "Running Project")
+
+# Running or debug content script inject
+
+```
+> pnpm run dev:inject
+```
+
+After run above command then open browser with vite address  for example `http://localhost:5173/src/debug-inject.html`

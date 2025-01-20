@@ -105,9 +105,34 @@
   const handlerOnInputScriptChange = (e: Event) => {
     console.log(`handlerOnInputScriptChange`, { e })
   }
-</script>
 
-<div id={containerId} class="{$display} draggable">
+  onMount(()=>{
+  })
+/* Draggable Div*/
+  export let left:number = 30
+  export  let top:number=30
+  let moving:boolean = false
+
+  function startDrag(){
+    moving = true
+  }
+
+  function stopDrag(){
+    moving = false
+  }
+
+  function onMouseMove(e: MouseEvent) {
+    // console.log(`move (${e.movementX}, ${e.movementY})`)
+    if (moving) {
+      left+= e.movementX
+      top+= e.movementY
+    }
+  }
+// $: console.log(moving)
+  /* eof Draggable div*/
+</script>
+<svelte:window on:mouseup={stopDrag} on:mousemove={onMouseMove}/>
+<div id={containerId} class="{$display} draggable" on:mousedown={startDrag} style="left:{left}px;top:{top}px">
   {#if $validCoursePage}
     <span>{$slug}</span>
   {:else}
@@ -137,9 +162,11 @@
   #input-script,
   #input-script-caller,
   #output-script {
-    color: #ffffff;
+    color: #000000;
     display: block;
-    border: solid 1px #fff;
+    border: solid 1px #dddddd;
+    margin-top: 3px;
+    border-radius: 3px;
   }
   .flex {
     display: flex;
@@ -147,27 +174,39 @@
   .hidden {
     display: none;
   }
+  .draggable {
+    position: absolute;
+    z-index: 2001;
+    border: solid 1px #dddddd;
+    cursor: move;
+    user-select: none;
+    width: 450px !important;
+    border-radius: 3px;
+    /*
+     margin-top: 3.1em;
+    margin-left: 22%;
+    */
+  }
   #content-script-app {
     flex-direction: column;
-    position: absolute;
     background: #000;
     color: #fff;
-    z-index: 2001;
     opacity: 0.7;
     font-family: monospace;
-    margin-top: 3.1em;
-    margin-left: 22%;
+
     padding: 1em;
   }
   .action-container {
     width: 100%;
-    text-align: right;
+    /*text-align: right;*/
     display: flex;
     justify-content: space-between;
+    padding-top: 4px;
   }
   .btn-container {
     align-items: end;
     justify-content: end;
+
   }
   .course-page-checker,
   .btn-container {
@@ -176,6 +215,8 @@
   }
   #exit-button,
   #exec-button {
+    border: solid 1px #dddddd;
+    border-radius: 3px;
     cursor: pointer;
     margin-left: 2px;
     padding: 2px;

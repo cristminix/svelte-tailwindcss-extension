@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:inject": "vite  --config vite.content-inject.ts",
     "build": "vite build",
     "build:inject": "vite build --config vite.content-inject.ts",
     "check": "svelte-check --tsconfig ./tsconfig.json",

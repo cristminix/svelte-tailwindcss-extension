@@ -35,7 +35,7 @@
       if (legacyMode) {
         const result = await mPrxCache.get(slug)
         const ds = result.content
-        createDownloadFile(JSON.stringify(ds), "legacy-m3rec.json")
+        // createDownloadFile(JSON.stringify(ds), "legacy-m3rec.json")
         const rows = getM3RecByType("com.linkedin.learning.api.deco.content.Course", ds)
         console.info({ rows, ds })
       } else {

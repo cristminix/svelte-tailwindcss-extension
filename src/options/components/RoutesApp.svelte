@@ -59,15 +59,16 @@
  
   let routeChangesTimer:any = null
   let routeChangesClock:number = 0
+  const routeChangesTimeout:number = 3000
   const watchRouteChanges = ()=>{
     if(routeChangesTimer) return
     clearInterval(routeChangesTimer)
     routeChangesTimer = setInterval(async ()=>{
-      console.log(`route changes watcher is running ${routeChangesClock}`)
+      // console.log(`route changes watcher is running ${routeChangesClock}`)
       routeChangesClock+=1
       const lastUrl = await idb.get("route.url")
       if (lastUrl && lastUrl != $url) setRoute(lastUrl as string)
-    },5000)
+    },routeChangesTimeout)
 
   }
 

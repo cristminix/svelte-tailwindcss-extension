@@ -23,10 +23,7 @@
   import { onMessage } from "@/global/fn/onMessage"
   import { sendMessage } from "@/global/fn/sendMessage"
 
-  interface LastCourseInterface {
-    name: string
-    slug: string
-  }
+  import type {LastCourseInterface} from "@/popup/type";
 
   import { openOptionsPage } from "@/global/fn/openOptionsPage"
   // import { isLinkedinLearningUrl } from "@/global/fn/course/isLinkedinLearningUrl"
@@ -35,6 +32,8 @@
   import { SqlDB } from "@/global/classes/SqlDB"
   import DBStore from "@/global/db/DBStore"
   import type MSetting from "@/global/db/models/MSetting"
+  import {loadLastCourseDdData} from "@/popup/fn/loadLastCourseDdData";
+  import type {TCourse} from "@/global/db/models/schema";
 
   const sqldb = new SqlDB()
   const dbStore = DBStore.getInstance()
@@ -42,7 +41,13 @@
 
   const lastCourseDdData: Writable<LastCourseInterface[]> = writable([])
 
-  function onSelectCourse(event: Event & { currentTarget: EventTarget & HTMLSelectElement }) {
+  async function onSelectCourse(event: Event & { currentTarget: EventTarget & HTMLSelectElement }) {
+    const slug = event.currentTarget.value as string
+    const [course] = $lastCourseDdData.filter((r)=>r.slug===slug)
+    await idb.set("route.url",`/course/display/${course.id}/${slug}`)
+    openOptionsPage()
+
+    console.log("slug", slug)
     throw new Error("Function not implemented.")
   }
   async function onMessageAddCourseLegacy(data: any) {
@@ -55,7 +60,7 @@
     }
     console.log({ courseSlug })
     if (courseSlug) {
-      insertCourseLegacyM3Rec(courseSlug, data, (slug: string, success: boolean) => {
+      await insertCourseLegacyM3Rec(courseSlug, data, (slug: string, success: boolean) => {
         if (success) {
           console.log(`insertCourseLegacyM3Rec success: ${slug}`)
           activateAddCourseOptionTab(courseSlug, true)
@@ -69,7 +74,7 @@
   }
   async function broadcastGetM3Rec(courseSlug: string) {
     const msg = "cmd.getM3Rec"
-    sendMessage(msg, courseSlug)
+    await sendMessage(msg, courseSlug)
   }
   async function addCourseLegacy(courseSlug: string) {
     console.log(`PopupApp.addCourseLegacy: ${courseSlug}`)
@@ -82,7 +87,7 @@
     await broadcastGetM3Rec(courseSlug)
   }
   async function activateAddCourseOptionTab(courseSlug: string, legacyMode: boolean) {
-    idb.set("route.url", `/course/add/${courseSlug}${legacyMode ? "?legacyMode=true" : ""}`)
+    await idb.set("route.url", `/course/add/${courseSlug}${legacyMode ? "?legacyMode=true" : ""}`)
     console.log(`PopupApp.activateAddCourseOptionTab: ${courseSlug}`)
     openOptionsPage()
   }
@@ -125,14 +130,35 @@
   async function broadcastGetValidCourseMessage() {
     blockMainContent.update((o) => true)
     const msg = "cmd.validCoursePage"
-    sendMessage(msg)
+    await sendMessage(msg,null,"content",(f)=>{
+      console.log(f)
+    })
+  }
+
+
+  /* Implement logic when popup window opened */
+  async function onPopupOpen(){
+    console.log("PopupApp.onPopupOpen")
+    const courseList=await loadLastCourseDdData(dbStore)
+    if(courseList){
+      const {records,totalRecords} = courseList
+      if(totalRecords > 0){
+        const courseRecords:LastCourseInterface[]=records as LastCourseInterface[]
+        console.log( courseRecords )
+        lastCourseDdData.set(courseRecords)
+      }
+    }
   }
   dbStore.onReady(() => {
     console.log(`mSetting  ${mSetting.isReady()}`)
+    onPopupOpen()
   })
   onMount(() => {
     console.log(`PopupApp: onMount called`)
     broadcastGetValidCourseMessage()
+    setTimeout(()=>{
+      blockMainContent.update((o) => false)
+    },5000)
     onMessage((evt, sender) => {
       console.log(`PopupApp receive messages`, { evt, sender })
       onMessageCommand(evt, sender)
@@ -175,18 +201,18 @@
       </div>
     </div>
 
-    <div class="action-cnt w-full">
+    <div class="action-cnt w-[250px]">
       {#if $lastCourseDdData.length > 0}
         <select
           class="select w-full max-w-xs"
-          on:select={onSelectCourse}
+          on:change={onSelectCourse}
         >
           <option
             disabled
             selected={$selectedCourseSlug === ""}>Load last course</option
           >
           {#each $lastCourseDdData as course}
-            <option>{course.name}</option>
+            <option value="{course.slug}">{course.title}</option>
           {/each}
         </select>
       {/if}
@@ -211,7 +237,7 @@
           </button>
         </div>
       {:else}
-        <div class="w-[250px] px-2 text-xs pb-2">Please make sure you are loged in with valid subscription and navigate in course page.</div>
+        <div class="w-[250px] p-2 text-xs pb-2">Please make sure you are loged in with valid subscription and navigate in course page.</div>
       {/if}
     </div>
   </div>

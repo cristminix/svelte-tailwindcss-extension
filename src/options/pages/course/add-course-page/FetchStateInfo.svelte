@@ -21,11 +21,11 @@
   }
 
   export const setLoading = (isLoading: boolean) => {
-    $loading = isLoading
+    loading.set(isLoading)
   }
 
   export const setRunLevel = (newRunLevel: number) => {
-    $runLevel = newRunLevel
+    runLevel.set(newRunLevel)
   }
   let runLevel = writable(0)
   let statusCode = writable(0)
@@ -37,7 +37,8 @@
   let success = writable(false)
 
   runLevel.subscribe((value) => {
-    if ($runLevel === 0) {
+    // console.log(value,$statusCode,$loading)
+    if (value === 0) {
       $icon = "fa fa-globe"
       $message = `Fetch ${name}`
     } else {
@@ -48,7 +49,10 @@
           $hasError = true
           $success = false
         } else {
+          console.log('here')
           $success = true
+          $icon = "fa fa-check-circle"
+
         }
       } else {
         $message = `Fetching ${name}`

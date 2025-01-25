@@ -54,7 +54,7 @@ export const firefoxSendMessage = (evt: ReturnType<typeof MessageEvent>, target:
 }
 export const sendMessage = async (eventName: string, data: any = null, target: "content" | "popup" = "content", callback: SendMessageCallback = (f) => f) => {
   const evt = MessageEvent(eventName, data)
-
+  let success = true
   try {
     if (import.meta.env.VITE_EXT_TARGET_BROWSER === "chrome") {
       chromeSendMessage(evt, target, callback)
@@ -63,5 +63,7 @@ export const sendMessage = async (eventName: string, data: any = null, target: "
     }
   } catch (err) {
     console.error(err)
+    success = false
   }
+  return success
 }

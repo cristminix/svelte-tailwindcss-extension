@@ -12,7 +12,8 @@
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "db:generate": "drizzle-kit generate",
     "db:up": "drizzle-kit up",
-    "fix-manifest-dev": "node src/tools/fix-firefox-manifest.js"
+    "fix-manifest-dev": "node src/tools/fix-firefox-manifest.js",
+    "test": "vitest"
   },
   "devDependencies": {
     "@esbuild/win32-ia32": "^0.23.0",

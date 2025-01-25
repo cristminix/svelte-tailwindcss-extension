@@ -59,7 +59,7 @@
  
   let routeChangesTimer:any = null
   let routeChangesClock:number = 0
-  const routeChangesTimeout:number = 3000
+  const routeChangesTimeout:number = 2000
   const watchRouteChanges = ()=>{
     if(routeChangesTimer) return
     clearInterval(routeChangesTimer)

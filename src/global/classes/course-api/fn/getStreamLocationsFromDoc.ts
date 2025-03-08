@@ -1,12 +1,12 @@
 import type {StreamLocationInterface} from "@/global/classes/types";
 import jQuery from "jquery";
-export function getStreamLocationsFromDoc(toc:any,doc: any,vMetaDataNd:any){
+export function getStreamLocationsFromDoc(toc:any,doc: any,$videoMetaDataNode:any){
     let streamLocations:any|null = null//mStreamLocation.getListByTocId(toc.id)
     // let vMetaDataNd:any|null = null
-    let pgStreamNds:any[] = []
+    let $pgStreamNds:any[] = []
     if(Array.isArray(streamLocations)){
-        if (vMetaDataNd) {
-            pgStreamNds = vMetaDataNd.find("progressiveStreams")
+        if ($videoMetaDataNode) {
+            $pgStreamNds = $videoMetaDataNode.find("progressiveStreams")
         }
 
     }
@@ -15,14 +15,14 @@ export function getStreamLocationsFromDoc(toc:any,doc: any,vMetaDataNd:any){
     // let streamLocations = null
     const tags:string[] = ["size", "bitRate", "width", "height"]
 
-    if(Array.isArray(pgStreamNds)){
-    if (pgStreamNds.length > 0) {
-        for (const pgStreamElem of pgStreamNds) {
+    if(Array.isArray($pgStreamNds)){
+    if ($pgStreamNds.length > 0) {
+        for (const pgStreamElem of $pgStreamNds) {
             const pgStreamEl = jQuery(pgStreamElem)
-            let fmt : any = pgStreamEl.find("height")
+            let $fmtNd : any = pgStreamEl.find("height")
 
-            if (fmt.length>0) {
-                fmt = fmt.text().trim()
+            if ($fmtNd.length>0) {
+                let fmt :string = $fmtNd.text().trim()
 
                 if (fmt === "0") {
                     fmt = "audio"
@@ -49,20 +49,20 @@ export function getStreamLocationsFromDoc(toc:any,doc: any,vMetaDataNd:any){
                     }
 
                     for (const tag of tags) {
-                        const tagNd = streamLoc.find(tag)
+                        const $tagNd = streamLoc.find(tag)
 
-                        if (tagNd.length>0) {
-                            streamLocations[fmt][tag] = parseInt(tagNd.text().trim())
+                        if ($tagNd.length>0) {
+                            streamLocations[fmt][tag] = parseInt($tagNd.text().trim())
                         }
                     }
 
-                    const sLoc:StreamLocationInterface = {
+                    const streamLocation:StreamLocationInterface = {
                         fmt,
                         url: streamLocations[fmt].url,
                         expiresAt: streamLocations[fmt].expiresAt
                     }
                         //const row = await mStreamLocation.create(fmt, sLoc.url, toc.id, sLoc.expiresAt)
-                    streamLocations[fmt]=sLoc
+                    streamLocations[fmt]=streamLocation
                 }
             }
         }

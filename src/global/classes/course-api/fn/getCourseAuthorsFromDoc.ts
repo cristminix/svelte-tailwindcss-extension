@@ -4,10 +4,10 @@ import {getCourseXmlParentElement} from "@/global/fn/course/getCourseXmlParentEl
 import jQuery from "jquery";
 import type {CourseAuthorInterface} from "@/global/classes/types";
 
-export function getCourseAuthorsFromDoc(doc: any) {
+export function getCourseAuthorsFromDoc($doc: any) {
     let courseAuthors: CourseAuthorInterface[] = []
     // authors=[]
-    const [pp,courseUrn] = getCourseXmlParentElement(doc)
+    const [pp] = getCourseXmlParentElement($doc)
     if(pp) {
         const p = pp as any
         let authorEls = p.find("authors")
@@ -17,8 +17,8 @@ export function getCourseAuthorsFromDoc(doc: any) {
         const authorSlugExists:string[] =[]
         for (const authorEl of authorEls) {
             let authorUrn = jQuery(authorEl).text()
-            let authorEntityEls = doc.find(`entityUrn:contains('${authorUrn}')`)
-            authorEntityEls = authorEntityEls.filter((i:any, item:any) => jQuery(item).text().trim().match(/urn:li:learningApiAuthor:/))
+            let authorEntityEls = $doc.find(`entityUrn:contains('${authorUrn}')`)
+            authorEntityEls = authorEntityEls.filter((elem:any) => jQuery(elem).text().trim().match(/urn:li:learningApiAuthor:/))
             if (authorEntityEls.length > 0) {
                 for (const authorEntityElem of authorEntityEls) {
                     const authorEntityEl = jQuery(authorEntityElem)
@@ -26,9 +26,9 @@ export function getCourseAuthorsFromDoc(doc: any) {
                     if (authorEntityUrn.length > 0) {
 
                         if (authorEntityUrn == authorUrn) {
-                            let authorEntityElP = authorEntityEl.parent()
+                            let $authorEntityElP = authorEntityEl.parent()
                             // console.log(authorEntityElP.html())
-                            let slug = getNText(authorEntityElP, 'slug')
+                            let slug = getNText($authorEntityElP, 'slug')
                             let name = slugToTitle(slug)
                             if(slug.length > 0 && !authorSlugExists.includes(slug)) {
                                 authorSlugExists.push(slug)
@@ -44,9 +44,9 @@ export function getCourseAuthorsFromDoc(doc: any) {
                                 biography = biographyV2
                             }
                             */
-                            let shortBiography = getNText(authorEntityElP, ['shortBiography', 'text'])
-                            let shortBiographyV2 = getNText(authorEntityElP, ['shortBiographyV2', 'text'])
-                            let shortBiographyV3 = getNText(authorEntityElP, ['shortBiographyV3', 'text'])
+                            let shortBiography = getNText($authorEntityElP, ['shortBiography', 'text'])
+                            let shortBiographyV2 = getNText($authorEntityElP, ['shortBiographyV2', 'text'])
+                            let shortBiographyV3 = getNText($authorEntityElP, ['shortBiographyV3', 'text'])
 
                             if(shortBiographyV3.length>0){
                                 shortBiography = shortBiographyV3

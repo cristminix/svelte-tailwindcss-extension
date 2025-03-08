@@ -4,7 +4,7 @@ import jQuery from "jquery";
 import {slugify} from "@/global/fn/course/slugify";
 export function getCourseSectionsFromDoc(doc: any) {
     let sections:SectionInterface[] = []
-    const [pp, courseUrn] = getCourseXmlParentElement(doc)
+    const [pp] = getCourseXmlParentElement(doc)
     if (pp) {
         const p = pp as JQuery
         let courseSectionStars = p.find("contents")

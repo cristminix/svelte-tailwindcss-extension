@@ -6,8 +6,8 @@ import {getTocXmlParentElement} from "@/global/fn/course/getTocXmlParentElement"
 export function getCourseSectionTocsFromDoc(section: SectionInterface, doc:any, courseSlug:string){
     let tocs:TocInterface[]=[]
     for (const itemStar of section.itemStars){
-        let entityNdP = getTocXmlParentElement(itemStar,doc)
-        if(!entityNdP){
+        let $entityNdP = getTocXmlParentElement(itemStar,doc)
+        if(!$entityNdP){
             return null
         }
         const toc:TocInterface={
@@ -22,20 +22,20 @@ export function getCourseSectionTocsFromDoc(section: SectionInterface, doc:any, 
             thumbnails:[],
             url:''
         }
-        let tocSlugNd = entityNdP.find("slug")
-        if(tocSlugNd.length > 0){
-            let tocSlug = tocSlugNd.text()
+        let $tocSlugNd = $entityNdP.find("slug")
+        if($tocSlugNd.length > 0){
+            let tocSlug = $tocSlugNd.text()
             toc.slug = tocSlug
             toc.url = `https://www.linkedin.com/learning/${courseSlug}/${tocSlug}`
         }
 
-        toc.title = entityNdP.find("title").text()
-        toc.visibility = entityNdP.find("visibility").text()
-        toc.duration = parseInt(entityNdP.find("duration").text())
+        toc.title = $entityNdP.find("title").text()
+        toc.visibility = $entityNdP.find("visibility").text()
+        toc.duration = parseInt($entityNdP.find("duration").text())
 
-        let vStatusUrn = entityNdP.find("star_lyndaVideoViewingStatus").text().trim()
+        let vStatusUrn = $entityNdP.find("star_lyndaVideoViewingStatus").text().trim()
         if(vStatusUrn.length == 0){
-            vStatusUrn = entityNdP.find("star_interactionstatusv2").text().trim()
+            vStatusUrn = $entityNdP.find("star_interactionstatusv2").text().trim()
 
         }
         toc.vStatusUrn = vStatusUrn

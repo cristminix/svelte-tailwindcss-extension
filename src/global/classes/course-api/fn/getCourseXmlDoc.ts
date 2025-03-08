@@ -1,1 +1,0 @@
-export async function getCourseXmlDoc(courseUrl: string, noCache = false) {}

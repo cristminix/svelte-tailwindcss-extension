@@ -1,1 +1,0 @@
-export async function getAuthor(courseSlug: string) {}

@@ -1,7 +1,15 @@
 <script lang="ts">
   import Button from "@/global/components/ux/Button.svelte"
   import { writable } from "svelte/store"
-
+  /***
+   * Provide information about fetch
+   * status code -1 : error by user
+   *             200: ok
+   *             40*: error by networks
+   * setRunLevel also changes the behavior of button and icons
+   * onRetry : execute callback while user click retry button
+   * onFetch : execute callback while user click fetch button
+   */
   export let name: string
   export let onRetry: (event: Event) => void
   export let onFetch: (event: Event) => void

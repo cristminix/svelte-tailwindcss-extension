@@ -3,7 +3,7 @@ import {getTocXmlParentElement} from "@/global/fn/course/getTocXmlParentElement"
 /**
  * Get all tocs by its sections item stars
  * */
-export async function getCourseSectionTocs(section: SectionInterface,doc:any,courseSlug:string){
+export function getCourseSectionTocsFromDoc(section: SectionInterface, doc:any, courseSlug:string){
     let tocs:TocInterface[]=[]
     for (const itemStar of section.itemStars){
         let entityNdP = getTocXmlParentElement(itemStar,doc)

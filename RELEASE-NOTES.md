@@ -1,0 +1,1 @@
+- fix dragable window on content script inject app window

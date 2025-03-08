@@ -63,3 +63,17 @@ When firefox opened then reload the page.
 ```
 
 After run above command then open browser with vite address  for example `http://localhost:5173/src/debug-inject.html`
+
+
+## Notes
+Remember to create new profile by opening the firefox app and enter `about:profiles` then create new profile called `default-release` as it specified on `vite.config.ts` to allow keep profile changes never use it as default profile
+
+On linux with forefox snap app you need to edit `.bashrc` or `.zhrc` or `.profile`
+
+```
+# add this line
+
+mkdir -p ~/tmp-dir
+export TMPDIR=~/tmp-dir/
+```
+To avoid errors while executing `web-ext` command

@@ -9,9 +9,10 @@
   import PrxCache from "@/global/classes/PrxCache"
   import { createDownloadFile } from "@/global/fn/createDownloadFile"
   import { getM3RecByType } from "@/content-scripts/inject/fn/legacy/getM3RecByType"
-  import {fetchXmlDoc, getCourseXmlDoc} from "@/global/classes/course-api/fn";
+  import {fetchXmlDoc, getCourseSectionTocsFromDoc} from "@/global/classes/course-api/fn";
   import {courseUrlFromSlug} from "@/global/fn/course/courseUrlFromSlug";
   import {getCourseInfoFromDoc} from "@/global/classes/course-api/fn/getCourseInfoFromDoc";
+  import {getCourseAuthorsFromDoc} from "@/global/classes/course-api/fn/getCourseAuthorsFromDoc";
 
   export let store: DBStore
   export let params: any = null
@@ -47,8 +48,8 @@ let fetchStateInfoRef: FetchStateInfo
       // const html = doc.html()
       // createDownloadFile( html,`${slug}.xml`)
       const courseInfo =  getCourseInfoFromDoc(doc,slug)
-
-      console.info(courseInfo)
+      const courseAuthors =  getCourseAuthorsFromDoc(doc)
+      console.info(courseAuthors)
     }
     fetchStateInfoRef.setLoading(false)
   }

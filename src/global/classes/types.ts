@@ -65,6 +65,8 @@ export interface TocInterface {
   visibility: string
   thumbnails: ThumbnailInterface[]
   streamLocations: StreamLocationInterface[]
+  transcripts:TranscriptInterface[]
+  url:string
 }
 export interface TranscriptInterface {
   lang: string
@@ -91,3 +93,10 @@ export interface CourseInfoInterface {
   viewerCounts?: number
   dificulty?:string
 }
+
+export interface CourseAuthorInterface {
+  name: string
+  slug: string
+  shortBiography: string
+}
+

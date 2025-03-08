@@ -1,2 +1,2 @@
 export {fetchXmlDoc} from "./fetchXmlDoc"
-export {getCourseXmlDoc} from "./getCourseXmlDoc"
+export {getCourseSectionTocsFromDoc} from "./getCourseSectionTocsFromDoc"

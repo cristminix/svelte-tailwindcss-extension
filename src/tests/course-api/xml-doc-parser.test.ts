@@ -1,6 +1,6 @@
 import "fake-indexeddb/auto"
 import { loadXmlFile } from "@/tests/loadXmlFile";
-import type { CourseInfoInterface, TM3Rec } from "@/global/classes/types"
+import type {CourseInfoInterface, SectionInterface, TM3Rec} from "@/global/classes/types"
 import type { TAuthor, TAuthorCourseN, TAuthorN, TCourse, TCourseN, TSection, TSectionN, TThumbnail, TThumbnailN, TTocN } from "@/global/db/models/schema"
 import { SqlDB } from "@/global/classes/SqlDB"
 import DBStore from "@/global/db/DBStore"
@@ -20,6 +20,9 @@ import { createAuthorCourse } from "@/global/fn/course-api/author/createAuthorCo
 import type MAuthorCourse from "@/global/db/models/MAuthorCourse"
 import {getCourseInfoFromDoc} from "@/global/classes/course-api/fn/getCourseInfoFromDoc";
 import jQuery from "jquery";
+import {getCourseSectionsFromDoc} from "@/global/classes/course-api/fn/getCourseSectionsFromDoc";
+import {getCourseAuthorsFromDoc} from "@/global/classes/course-api/fn/getCourseAuthorsFromDoc";
+import {getCourseSectionTocsFromDoc} from "@/global/classes/course-api/fn";
 const sqldb = new SqlDB()
 const dbStore = DBStore.getInstance()
 describe("Xml Doc parser test", async () => {
@@ -45,7 +48,23 @@ describe("Xml Doc parser test", async () => {
         // console.log(cheerio)
 
         const doc = jQuery(xmlContent)
-        const courseInfo = await getCourseInfoFromDoc(doc,slug)
-        console.log(courseInfo)
+        const courseInfo = getCourseInfoFromDoc(doc, slug)
+        const courseAuthors = getCourseAuthorsFromDoc(doc)
+        const courseSections:SectionInterface[] = getCourseSectionsFromDoc(doc)
+        const secsTocs:any = {}
+        for (const section of courseSections) {
+            const tocs = getCourseSectionTocsFromDoc(section,doc,slug)
+            secsTocs[section.slug] = tocs
+        }
+        // test first toc
+        const toc = secsTocs[courseSections[0].slug as keyof typeof secsTocs ][0]
+        console.log(courseInfo,courseSections,courseAuthors,secsTocs,{toc})
+
+        //
+        const tocSlug = "the-power-of-cloud-native"
+        const tocXmlFilePath = `${tocSlug}.xml`
+
+        const tocDoc = await loadXmlFile(tocXmlFilePath)
+        console.log(tocDoc)
     })
 })

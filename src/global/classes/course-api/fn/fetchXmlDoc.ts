@@ -3,7 +3,9 @@ import PrxCache from "@/global/classes/PrxCache";
 import {parseJsonSchema} from "@/global/fn/course/parseJsonSchema";
 import {convertJsonToXml} from "@/global/fn/course/convertJsonToXml";
 import jQuery from "jquery"
-
+/**
+ * This function is used to fetch course xml doc and toc xml doc
+ * */
 export async function fetchXmlDoc(url: string, noCache: boolean = false) {
     const mPrxCache = PrxCache.getInstance()
     let cacheContent:string|null = null

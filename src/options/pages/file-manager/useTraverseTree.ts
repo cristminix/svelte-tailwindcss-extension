@@ -19,7 +19,7 @@ const useTraverseTree = () => {
     }
 
     // Depth First Search | DFS Algorithm use here...
-    const latestNode = tree.items.map((subTree) => insertNode(subTree, folderID, item, isFolder))
+    const latestNode = tree.items.map((subTree:any) => insertNode(subTree, folderID, item, isFolder))
 
     return { ...tree, items: latestNode }
   }

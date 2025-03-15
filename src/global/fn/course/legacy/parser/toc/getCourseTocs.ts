@@ -20,6 +20,8 @@ export function getCourseTocs(ds: TM3Rec, itemStars: string[]) {
           thumbnails: getTocThumbnails(tocsMarkup),
           vStatusUrn: getTocVStatusUrn(tocsMarkup),
           streamLocations: [],
+          transcripts:[],
+          url:''
         }
         tocs.push(toc)
       }

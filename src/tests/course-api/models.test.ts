@@ -81,6 +81,7 @@ describe("Legacy Model test", async () => {
         /* create sections */
         /*----------------------------------------------------------------------------------*/
         const { sections: sectionRows } = courseInfo
+        if(sectionRows && sectionRows.length > 0) {
         for (const section of sectionRows) {
           const { title, slug, itemStars } = section
           const courseId = courseRec.id
@@ -134,6 +135,7 @@ describe("Legacy Model test", async () => {
           }
           console.info({ sectionRec })
         }
+        }
       }
 
       console.info({ courseRec })
@@ -142,6 +144,7 @@ describe("Legacy Model test", async () => {
       /* create course author */
       /*----------------------------------------------------------------------------------*/
       const { authors } = courseInfo
+      if(authors && authors.length > 0) {
       for (const author of authors) {
         const { slug, name, biography, shortBiography } = author
         let bio = biography
@@ -159,10 +162,12 @@ describe("Legacy Model test", async () => {
           let authorCourseRec = await createAuthorCourse(authorCourseRow, mAuthorCourse)
         }
       }
+      }
       /*----------------------------------------------------------------------------------*/
       /* create course thumbnail */
       /*----------------------------------------------------------------------------------*/
       const { thumbnails } = courseInfo
+      if (thumbnails && thumbnails.length > 0) {
       for (const thumbnail of thumbnails) {
         const { size, url, expiresAt } = thumbnail
         const tocId = courseRec.id as number
@@ -180,6 +185,7 @@ describe("Legacy Model test", async () => {
         } else {
           console.error(`not insert thumbnail becouse expired`)
         }
+      }
       }
     }
   })

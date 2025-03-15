@@ -19,8 +19,12 @@ describe("Legacy Api test", () => {
     const courseInfo: CourseInfoInterface | null = getCourseInfo(ds, courseSlug)
     if (courseInfo) {
       const { sections, thumbnails } = courseInfo
-      const tocs = getCourseTocs(ds, sections[0].itemStars)
-      console.info({ thumbnails, tocs })
+      if(sections && sections.length > 0) {
+        const tocs = getCourseTocs(ds, sections[0].itemStars)
+        console.info({ thumbnails, tocs })
+      }
+
+
     }
   })
 })

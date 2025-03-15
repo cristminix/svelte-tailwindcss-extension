@@ -1,3 +1,3 @@
-export function getTranscriptsFromDoc(doc){
+export function getTranscriptsFromDoc(doc:any){
 
 }

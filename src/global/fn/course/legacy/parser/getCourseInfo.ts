@@ -12,6 +12,7 @@ import { getCourseAuthors } from "./course/getCourseAuthors"
 import { getCourseSections } from "./section/getCourseSections"
 import { getCourseThumbnails } from "./course/getCourseThumbnails"
 import { getCourseTimestamp } from "./course/getCourseTimestamp"
+import {courseUrlFromSlug} from "@/global/fn/course/courseUrlFromSlug";
 
 function getCourseMarkup(ds: any, slug: string) {
   const rows = getDsRecordsByType("com.linkedin.learning.api.deco.content.Course", ds)
@@ -56,6 +57,7 @@ export function getCourseInfo(ds: TM3Rec, slug: string): CourseInfoInterface | n
       sections,
       thumbnails,
       timestamp,
+      url:courseUrlFromSlug(slug)
     }
   }
   return courseInfo

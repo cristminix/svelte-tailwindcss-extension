@@ -1,6 +1,6 @@
 import "fake-indexeddb/auto"
 import { loadXmlFile } from "@/tests/loadXmlFile";
-import type {CourseInfoInterface, SectionInterface, TM3Rec} from "@/global/classes/types"
+import type {CourseInfoInterface, SectionInterface, TM3Rec, TocInterface} from "@/global/classes/types"
 import type { TAuthor, TAuthorCourseN, TAuthorN, TCourse, TCourseN, TSection, TSectionN, TThumbnail, TThumbnailN, TTocN } from "@/global/db/models/schema"
 import { SqlDB } from "@/global/classes/SqlDB"
 import DBStore from "@/global/db/DBStore"
@@ -57,14 +57,14 @@ describe("Xml Doc parser test", async () => {
             secsTocs[section.slug] = tocs
         }
         // test first toc
-        const toc = secsTocs[courseSections[0].slug as keyof typeof secsTocs ][0]
+        const toc:TocInterface = secsTocs[courseSections[0].slug as keyof typeof secsTocs ][0]
         console.log(courseInfo,courseSections,courseAuthors,secsTocs,{toc})
 
         //
-        const tocSlug = "the-power-of-cloud-native"
+        const tocSlug = toc.slug //"the-power-of-cloud-native"
         const tocXmlFilePath = `${tocSlug}.xml`
 
         const tocDoc = await loadXmlFile(tocXmlFilePath)
-        console.log(tocDoc)
+        console.log({tocDoc})
     })
 })

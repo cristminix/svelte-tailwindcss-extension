@@ -1,4 +1,4 @@
-import { ThumbnailSchema, type TThumbnail } from "./schema"
+import {ThumbnailSchema, type TThumbnail, type TThumbnailN, type TThumbnailU} from "./schema"
 import DrizzleDB from "./DrizzleDB"
 import { and, eq } from "drizzle-orm"
 
@@ -17,7 +17,7 @@ class MThumbnail extends DrizzleDB {
     // console.log(`called`, { table: this.schema })
     return await this.getRow({ size, parentId, kind })
   }
-  async update(pk: number | string, row: Partial<Omit<typeof this.schema, "id" | "timestamp">>) {
+  async update(pk: number | string, row: TThumbnailU) {
     const condition = eq(this.schema.id, pk as number)
     const success = await this.db.update(this.schema).set(row).where(condition)
     const { size, parentId, kind } = row
@@ -26,7 +26,7 @@ class MThumbnail extends DrizzleDB {
     }
     return null
   }
-  async create(row: Partial<Pick<typeof this.schema, "id" | "timestamp">> & Omit<typeof this.schema, "id" | "timestamp">) {
+  async create(row: TThumbnailN) {
     const success = await this.db.insert(this.schema).values(row)
     const { size, parentId, kind } = row
     if (success) {

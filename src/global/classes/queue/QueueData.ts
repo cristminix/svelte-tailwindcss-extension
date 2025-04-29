@@ -5,11 +5,11 @@ import { QueueState } from "./QueueState"
 export class QueueData {
   course: any = null
   tocs: any = null
-  tocArr: any = []
+  tocArr: any[] = []
   sections: any = null
   vidx: any = {}
   pkIdxMaps: any = {}
-  defaultQueue: any = null
+  defaultQueue: Queue|null = null
   constructor(sections: any, tocs: any, course: any) {
     this.sections = sections
     this.tocs = tocs
@@ -19,6 +19,9 @@ export class QueueData {
   }
 
   buildQueue() {
+    if(!this.defaultQueue){
+      throw new Error("defaultQueue is null")
+    }
     let sidx = 0
     let midx = 0
     if (this.sections) {
@@ -54,6 +57,9 @@ export class QueueData {
     return this.tocArr[idx]
   }
   cloneQueue() {
+    if(!this.defaultQueue){
+      throw new Error("defaultQueue is null")
+    }
     return Queue.clone(this.defaultQueue)
   }
 
@@ -66,6 +72,9 @@ export class QueueData {
     return midx
   }
   getQueueItem(idx: number) {
+    if(!this.defaultQueue){
+      return null
+    }
     return this.defaultQueue.items[idx]
   }
 }

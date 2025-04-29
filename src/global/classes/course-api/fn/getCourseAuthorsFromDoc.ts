@@ -14,11 +14,14 @@ export function getCourseAuthorsFromDoc($doc: any) {
         if (authorEls.length == 0) {
             authorEls = p.find("star_authorsv2")
         }
+        if (authorEls.length == 0) {
+            authorEls = p.find("star_authorsv3")
+        }
         const authorSlugExists:string[] =[]
         for (const authorEl of authorEls) {
             let authorUrn = jQuery(authorEl).text()
             let authorEntityEls = $doc.find(`entityUrn:contains('${authorUrn}')`)
-            authorEntityEls = authorEntityEls.filter((elem:any) => jQuery(elem).text().trim().match(/urn:li:learningApiAuthor:/))
+            // authorEntityEls = authorEntityEls.filter((elem:any) => jQuery(elem).text().trim().match(/urn:li:learningApiAuthor:/))
             if (authorEntityEls.length > 0) {
                 for (const authorEntityElem of authorEntityEls) {
                     const authorEntityEl = jQuery(authorEntityElem)

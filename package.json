@@ -13,6 +13,7 @@
     "db:generate": "drizzle-kit generate",
     "db:up": "drizzle-kit up",
     "fix-manifest-dev": "node src/tools/fix-firefox-manifest.js",
+    "cp-sqlwasm": "mkdir -p dist/db && cp node_modules/sql.js/dist/sql-wasm.wasm dist/db/sql-wasm.wasm",
     "test": "vitest"
   },
   "devDependencies": {
@@ -48,6 +49,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@isomorphic-git/lightning-fs": "^4.6.0",
+    "@zerodevx/svelte-json-view": "^1.0.11",
     "bootstrap-icons": "^1.11.3",
     "drizzle-orm": "^0.32.0",
     "fetch-retry": "^6.0.0",
@@ -57,7 +59,6 @@
     "sql.js": "^1.10.3",
     "underscore": "^1.13.6"
   },
-  "packageManager": "pnpm@10.6.1+sha512.40ee09af407fa9fbb5fbfb8e1cb40fbb74c0af0c3e10e9224d7b53c7658528615b2c92450e74cfad91e3a2dcafe3ce4050d80bda71d757756d2ce2b66213e9a3",
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild",

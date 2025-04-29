@@ -77,3 +77,10 @@ mkdir -p ~/tmp-dir
 export TMPDIR=~/tmp-dir/
 ```
 To avoid errors while executing `web-ext` command
+
+
+# copy sql-wasm.wasm file to `dist/db` folder
+
+dont forget to copy `sql-wasm.wasm` wasm file to `dist/db` folder originally from `node_modules/sql.js/dist` folder to avoid wasm error
+
+

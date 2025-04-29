@@ -1,16 +1,17 @@
+import type { QueueItem } from "./QueueItem"
+
 export class Queue {
-  items: any
+  items: any[] = []
   static clone(instance: Queue) {
-    const keys = Object.keys(instance.items)
+    const values = Object.values(instance.items)
     const copyObj = new Queue()
-    keys.map((k, i) => {
-      const item = instance.items[k]
+    values.forEach((item) => {
       copyObj.enqueue(item)
     })
     return copyObj
   }
   constructor() {
-    this.items = []
+    // this.items = []
   }
   // enqueue function
   enqueue(element: any) {
@@ -31,13 +32,13 @@ export class Queue {
   peek() {
     // returns the Front element of
     // the queue without removing it.
-    if (this.isEmpty()) return "no_elements_in_queue"
+    if (this.isEmpty()) return null
     return this.items[0]
   }
   // isEmpty function
   isEmpty() {
     // return true if the queue is empty.
-    return this.items.length == 0
+    return this.items.length === 0
   }
   // printQueue function
   printQueue() {

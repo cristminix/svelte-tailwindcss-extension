@@ -13,26 +13,50 @@
   import {courseUrlFromSlug} from "@/global/fn/course/courseUrlFromSlug";
   import {getCourseInfoFromDoc} from "@/global/classes/course-api/fn/getCourseInfoFromDoc";
   import {getCourseAuthorsFromDoc} from "@/global/classes/course-api/fn/getCourseAuthorsFromDoc";
+  import CourseInfoDetail from "@/options/pages/course/add-course-page/CourseInfoDetail.svelte";
+  import type {CourseAuthorInterface, CourseInfoInterface} from "@/global/classes/types";
+  import {getCourseInfoLegacy} from "@/global/fn/course/legacy/parser/getCourseInfoLegacy";
+  import {getCourseAuthorsLegacy} from "@/global/fn/course/legacy/parser/course/getCourseAuthorsLegacy";
 
   export let store: DBStore
   export let params: any = null
   export let queryString: string = ""
+  export let routeApp: any=null
 
   let toastRef: Toast
   const loading = writable(true)
   const mSetting = store.get("Setting") as MSetting
   const mPrxCache = PrxCache.getInstance()
+  let courseInfo = writable<CourseInfoInterface|null>(null)
+  let courseAuthors = writable<CourseAuthorInterface[]>([])
 let fetchStateInfoRef: FetchStateInfo
   store.onReady(() => loading.set(false))
-
+  const clearDetails = () => {
+    courseInfo.update(o => null)
+    courseAuthors.update(o => [])
+  }
   onMount(() => {
     if (store.isReady()) loading.set(false)
+    clearDetails()
+
+    if(routeApp){
+      routeApp.addRouteChangeCallback(() => {
+        clearDetails()
+
+      }, "add-course-page")
+    }
   })
   async function onFetchCourseLegacy(slug: string) {
     const result = await mPrxCache.get(slug)
     const ds = result.content
     // createDownloadFile(JSON.stringify(ds), "legacy-m3rec.json")
     const rows = getM3RecByType("com.linkedin.learning.api.deco.content.Course", ds)
+    const courseInfoTMP = getCourseInfoLegacy(ds,slug)
+    const courseAuthorsTMP = getCourseAuthorsLegacy(ds,slug)
+    courseInfo.update(o=>courseInfoTMP)
+    courseAuthors.update(o=> courseAuthorsTMP)
+
+
     console.info({ rows, ds })
   }
   async function onFetchCourse(slug: string) {
@@ -47,9 +71,12 @@ let fetchStateInfoRef: FetchStateInfo
     if(statusCode===200){
       // const html = doc.html()
       // createDownloadFile( html,`${slug}.xml`)
-      const courseInfo =  getCourseInfoFromDoc(doc,slug)
-      const courseAuthors =  getCourseAuthorsFromDoc(doc)
-      console.info(courseAuthors)
+      const courseInfoTMP =  getCourseInfoFromDoc(doc,slug)
+      const courseAuthorsTMP =  getCourseAuthorsFromDoc(doc)
+
+      courseInfo.update(o=>courseInfoTMP)
+      courseAuthors.update(o=> courseAuthorsTMP)
+      console.info({courseAuthorsTMP})
     }
     fetchStateInfoRef.setLoading(false)
   }
@@ -92,4 +119,5 @@ let fetchStateInfoRef: FetchStateInfo
     {onFetch}
     {onRetry}
   />
+  <CourseInfoDetail courseInfo={$courseInfo} courseAuthors={$courseAuthors}/>
 {/if}

@@ -1,7 +1,7 @@
-import { QueueState } from "./QueueState"
+import { ICRDQueueState } from "./ICRDQueueState"
 
-export class QueueItem {
-  state: number = QueueState.INIT
+export class ICRDQueueItem {
+  state: number = ICRDQueueState.INIT
   // loaded=null
   // size=null
   idx: number = 0

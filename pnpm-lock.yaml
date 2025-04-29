@@ -14,6 +14,9 @@ importers:
       '@isomorphic-git/lightning-fs':
         specifier: ^4.6.0
         version: 4.6.0
+      '@zerodevx/svelte-json-view':
+        specifier: ^1.0.11
+        version: 1.0.11(svelte@4.2.19)
       bootstrap-icons:
         specifier: ^1.11.3
         version: 1.11.3
@@ -943,6 +946,11 @@ packages:
 
   '@vitest/utils@2.1.8':
     resolution: {integrity: sha512-dwSoui6djdwbfFmIgbIjX2ZhIoG7Ex/+xpxyiEgIGzjliY8xGkcpITKTlp6B4MgtGkF2ilvm97cPM96XZaAgcA==}
+
+  '@zerodevx/svelte-json-view@1.0.11':
+    resolution: {integrity: sha512-mIjj0H1al/P4FPlbeDoiey93lNEUqBEAe5LIdD5GttZfEYt3awexD2lHwKNfUeY4jHizOJkoWTPN/2iO0GBqpw==}
+    peerDependencies:
+      svelte: ^3.57.0 || ^4.0.0 || ^5.0.0
 
   acorn@8.14.0:
     resolution: {integrity: sha512-cl669nCJTZBsL97OF4kUQm5g5hC2uihk0NxY3WENAC0TYdILVkAyHymAntgxGkl7K+t0cXIrH5siy5S4XkFycA==}
@@ -3467,6 +3475,10 @@ snapshots:
       '@vitest/pretty-format': 2.1.8
       loupe: 3.1.2
       tinyrainbow: 1.2.0
+
+  '@zerodevx/svelte-json-view@1.0.11(svelte@4.2.19)':
+    dependencies:
+      svelte: 4.2.19
 
   acorn@8.14.0: {}
 

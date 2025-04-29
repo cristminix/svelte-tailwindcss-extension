@@ -70,8 +70,8 @@ export class SqlDB {
         let sqlPromise: any
         if (IS_BROWSER) {
           sqlPromise = await initSqlJs({
-            // locateFile: (file) => this.getWasmUrl(file),
-            locateFile: (file) => `https://sql.js.org/dist/${file}`,
+            locateFile: (file) => this.getWasmUrl(file),
+            // locateFile: (file) => `https://sql.js.org/dist/${file}`,
           })
         } else {
           sqlPromise = await initSqlJs()

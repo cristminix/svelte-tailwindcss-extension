@@ -108,5 +108,5 @@
 
 <Template {routeApp} store={dbStore}>
   <RoutesApp bind:this={routeApp} {onRouteChange} />
-  <svelte:component this={page} queryString={$queryString} params={$routeParams} store={dbStore} />
+  <svelte:component this={page} queryString={$queryString} params={$routeParams} store={dbStore} routeApp={routeApp}/>
 </Template>

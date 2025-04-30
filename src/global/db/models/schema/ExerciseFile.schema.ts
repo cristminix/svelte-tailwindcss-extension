@@ -11,4 +11,9 @@ export const ExerciseFileSchema = sqliteTable("exerciseFile", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 })
-export type TExerciseFileSchema = InferModel<typeof ExerciseFileSchema>
+export type TExerciseFile = InferModel<typeof ExerciseFileSchema>
+// interface for new record
+export type TExerciseFileN = Partial<Pick<TExerciseFile, "id" | "timestamp">> & Omit<TExerciseFile, "id" | "timestamp">
+
+// interface for update record
+export type TExerciseFileU = Partial<Omit<TExerciseFile, "id" | "timestamp">>

@@ -4,7 +4,15 @@ import { and, eq } from "drizzle-orm"
 
 class MThumbnail extends DrizzleDB {
   schema = ThumbnailSchema
-  async exists(size: string, parentId: number, kind: string) {
+  async exists(size: string, parentId: number, kind: string,returnId = false) {
+    if (returnId) {
+      const thumbnail: TThumbnail | null = await this.getRow({ size, parentId, kind })
+      if (thumbnail) {
+        return thumbnail.id
+      } else {
+        return 0
+      }
+    }
     return (await this.count({ size, parentId, kind })) > 0
   }
   async getListByParent(parentId: number, kind: string) {

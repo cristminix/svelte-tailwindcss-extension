@@ -1,10 +1,17 @@
-import { CourseSchema } from "./schema"
+import {CourseSchema, type TCourse} from "./schema"
 // import DrizzleModelRw from "@/global/classes/DrizzleModelRw"
 import DrizzleDB from "./DrizzleDB"
 
 class MCourse extends DrizzleDB {
   schema = CourseSchema
-  async exists(slug: string) {
+  async exists(slug: string,returnId = false) {
+    if(returnId){
+        const course:TCourse|null = await this.getRow({ slug })
+        if(course){
+            return course.id
+        }
+        return 0
+    }
     return (await this.count({ slug })) > 0
   }
   async getBySlug(slug: string) {

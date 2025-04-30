@@ -1,10 +1,17 @@
-import { SectionSchema } from "./schema"
+import {SectionSchema, type TSection} from "./schema"
 // import DrizzleModelRw from "@/global/classes/DrizzleModelRw"
 import DrizzleDB from "./DrizzleDB"
 
 class MSection extends DrizzleDB {
   schema = SectionSchema
-  async exists(slug: string, courseId: number) {
+  async exists(slug: string, courseId: number,returnId = false) {
+    if(returnId){
+        const section:TSection|null = await this.getRow({ slug, courseId })
+        if(section){
+            return section.id
+        }
+        return 0
+    }
     return (await this.count({ slug, courseId })) > 0
   }
   async getBySlug(slug: string, courseId: number) {

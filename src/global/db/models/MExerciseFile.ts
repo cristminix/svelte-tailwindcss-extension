@@ -1,9 +1,19 @@
-import { ExerciseFileSchema } from "./schema"
+import {ExerciseFileSchema, type TExerciseFile} from "./schema"
 import DrizzleDB from "./DrizzleDB"
 
 class MExerciseFile extends DrizzleDB {
   schema = ExerciseFileSchema
-
+  async exists(courseId:number,name:string,returnId = false) {
+    if(returnId){
+        const exerciseFile :TExerciseFile|null = await this.getRow({ courseId, name })
+        if(exerciseFile){
+            return exerciseFile.id
+        }else{
+            return 0
+        }
+    }
+    return (await this.count({ courseId,name })) > 0
+  }
   getByNameAndCourseId(name: string, courseId: number) {
     // return this.singleQuery({query: {name,courseId}})
   }

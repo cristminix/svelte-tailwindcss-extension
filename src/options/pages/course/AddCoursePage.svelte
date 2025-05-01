@@ -17,6 +17,7 @@
   import type {CourseAuthorInterface, CourseInfoInterface} from "@/global/classes/types";
   import {getCourseInfoLegacy} from "@/global/fn/course/legacy/parser/getCourseInfoLegacy";
   import {getCourseAuthorsLegacy} from "@/global/fn/course/legacy/parser/course/getCourseAuthorsLegacy";
+  import ICRDQueueMan from "@/options/pages/course/add-course-page/ICRDQueueMan.svelte";
 
   export let store: DBStore
   export let params: any = null
@@ -29,6 +30,8 @@
   const mPrxCache = PrxCache.getInstance()
   let courseInfo = writable<CourseInfoInterface|null>(null)
   let courseAuthors = writable<CourseAuthorInterface[]>([])
+  let icrdQueueManRef:ICRDQueueMan
+
 let fetchStateInfoRef: FetchStateInfo
   store.onReady(() => loading.set(false))
   const clearDetails = () => {
@@ -94,6 +97,10 @@ let fetchStateInfoRef: FetchStateInfo
 
       }
       toastRef.add("Fetch completed successfully")
+      if(icrdQueueManRef){
+        if($courseInfo !== null)
+        await icrdQueueManRef.processQueue($courseInfo,$courseAuthors)
+      }
     } catch (error: unknown) {
       if (error instanceof Error) {
         toastRef.add(`Error during fetch: ${error.message}`, "error")
@@ -120,4 +127,5 @@ let fetchStateInfoRef: FetchStateInfo
     {onRetry}
   />
   <CourseInfoDetail courseInfo={$courseInfo} courseAuthors={$courseAuthors}/>
+  <ICRDQueueMan routeApp={routeApp} store={store} bind:this={icrdQueueManRef}/>
 {/if}

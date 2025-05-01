@@ -75,9 +75,13 @@ class DrizzleBaseModelRw {
     return page && page !== null
   }
   addQueryOrder(order: any) {
+    // console.log({order})
     const fields = Object.keys(order)
     const [field] = fields
+    // console.log({field})
+
     const direction = order[field]
+
     const orderBy = direction === "asc" ? asc(this.schema[field]) : desc(this.schema[field])
     return orderBy
   }

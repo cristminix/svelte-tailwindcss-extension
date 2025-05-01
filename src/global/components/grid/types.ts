@@ -12,6 +12,7 @@ export interface GridOptionsInterface {
   widthCls?: any
   headers: string[]
   enableEdit: boolean
+  enableDelete: boolean
   callbackActions?: any
   callbackHeaders?: any
   enableActions?: boolean

@@ -72,7 +72,7 @@
     // console.log({ tables, tableConf, table: $table })
     if (tableConf) {
       const modelName = tableConf.model
-      // console.log(modelName)
+      console.log(modelName)
       const modelSet = store.get<DrizzleDB>(modelName)
       // console.log(modelSet)
       conf.update((o) => tableConf)
@@ -134,7 +134,7 @@
     )
     */
   }
-
+  let deleteActionDynamicComponent:any
   const gridOptions = writable<GridOptionsInterface>({
     routeApp,
     numberWidthCls: "",
@@ -142,11 +142,17 @@
     widthCls: ["3/8", "5/8"],
     headers: ["Setting", "Value"],
     fields: ["key", "value"],
-    enableEdit: true,
+    enableDelete: true,
+    enableEdit:false,
     // callbackFields: {},
+    enableActions:true,
     useAutoEditor: true,
     callbackActions: {
-      edit: (item: any, index: number, options: any, linkCls: string, gridAction: any) => {
+      delete: (item: any, index: number, options: any) => {
+        alert(`Delete ${item.title} ?`)
+      },
+        edit: (item: any, index: number, options: any, linkCls: string, gridAction: any) => {
+
         /*
         return (
           <>
@@ -229,3 +235,6 @@
 {:else}
   {errorMessage}
 {/if}
+<svelte:component this={deleteActionDynamicComponent}>
+  Dynamic content
+</svelte:component>

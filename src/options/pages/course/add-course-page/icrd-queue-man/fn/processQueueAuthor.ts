@@ -5,7 +5,7 @@ import {
     insertAuthor,
     updateAuthor
 } from "@/options/pages/course/add-course-page/icrd-queue-man/tasks/author";
-import type {TAuthorN, TAuthorU} from "@/global/db/models/schema";
+import type {TAuthor, TAuthorN, TAuthorU} from "@/global/db/models/schema";
 import {
     checkAuthorCourseExists
 } from "@/options/pages/course/add-course-page/icrd-queue-man/tasks/author-course/checkAuthorCourseExists";
@@ -21,16 +21,17 @@ export async function processQueueAuthor(mAuthorCourse:MAuthorCourse,mAuthor:MAu
     }
     for(const author of authors){
         const {name,slug,shortBiography} = author
-        const authorId = await checkAuthorExists(mAuthor,slug)
-        let authorN:AuthorInterface
+        let authorId = await checkAuthorExists(mAuthor,slug)
+        let authorRec:TAuthor
         if(authorId) {
             const row:TAuthorU = {name, slug, bio:shortBiography}
-             authorN = await updateAuthor(mAuthor,authorId, row)
+            authorRec = await updateAuthor(mAuthor,authorId, row)
         }else {
             const row:TAuthorN = {name, slug, bio:shortBiography}
-             authorN = await insertAuthor(mAuthor, row)
+            authorRec = await insertAuthor(mAuthor, row)
+            authorId = authorRec.id
         }
-        results.authors.push(authorN)
+        results.authors.push(authorRec)
         const authorCourseExists = await checkAuthorCourseExists(mAuthorCourse,courseId,authorId)
         if(!authorCourseExists){
             const authorCourse = await insertAuthorCourse(mAuthorCourse,{courseId,authorId})

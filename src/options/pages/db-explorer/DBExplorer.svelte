@@ -15,11 +15,10 @@
   import { writable } from "svelte/store"
   import type DrizzleDB from "@/global/db/models/DrizzleDB"
   import type DBStore from "@/global/db/DBStore"
-  import { methods } from "underscore"
 
   export let store: DBStore
   // export let table
-  export let page: number
+  export let page: number = 1
   export let routeApp: any
   export let params: any
   const loading = writable(false)
@@ -30,7 +29,7 @@
   let editorFactoryRefs: any = {}
   let grid = writable<IGridData>({
     records: [],
-    limit: 5,
+    limit: 50,
     page: 1,
     totalPages: 0,
     totalRecords: 0,
@@ -41,25 +40,28 @@
   let table = writable<string | null>(null)
   const delay = makeDelay(256)
 
-  const updateList = async (pageNumber: number) => {
-    let nGrid = {
+  const updateList = async (pageNumber: number,limit:number) => {
+    let nGrid : IGridData= {
+      ...$grid,
       records: [],
     }
-    grid.update((o) => ({ ...$grid, ...nGrid }))
+    grid.update((o) => nGrid)
     console.log("update list called")
     loading.update((o) => true)
     delay(async () => {
+      console.log("delay called",{$conf,$model})
       if ($conf) {
         const method = $conf.listMethod as keyof DrizzleDB
         if ($model) {
-          ;(nGrid = await $model[method]()),
-            // console.log(nGrid)
-            grid.update((o) => ({ ...$grid, ...nGrid }))
-          loading.update((o) => false)
+          nGrid = await $model[method](limit,pageNumber)
+            console.log({nGrid})
+            grid.update((o) => ({ ...o, ...nGrid }))
         } else {
           console.log($model)
         }
       }
+      loading.update((o) => false)
+    
     })
   }
 
@@ -84,9 +86,11 @@
   }
 
   const onRefresh = async (e: any, setLoading: any) => {
-    loading.update((o) => true)
-    await updateList($grid.page)
-    loading.update((o) => false)
+    // entryPoint()
+    init($table)
+    // loading.update((o) => true)
+    // await updateList($grid.page,$grid.limit)
+    // loading.update((o) => false)
   }
 
   const editorFactory = (editor: any, field: any, value: any, item: any, index: number, fieldIndex: number) => {
@@ -148,8 +152,28 @@
     enableActions:true,
     useAutoEditor: true,
     callbackActions: {
-      delete: (item: any, index: number, options: any) => {
-        alert(`Delete ${item.title} ?`)
+      delete: async(item: any, index: number, options: any) => {
+        let title = item.title 
+        if(item.name){
+          title = item.name
+        }
+        if(!title){
+          title = item.id
+        }
+        // console.log(item)
+        if(title){
+          if(confirm(`Delete ${title} ?`)){
+            if($model){
+              try{
+                await $model.delete(item.id)
+                await init($table)
+              }catch(e){
+                alert(e)
+              }
+
+            }
+          }
+        }
       },
         edit: (item: any, index: number, options: any, linkCls: string, gridAction: any) => {
 
@@ -196,7 +220,7 @@
   function init(table: string | null = null) {
     if (table) {
       setModelAndConf(table)
-      updateList(1)
+      updateList(1,$grid.limit)
     }
   }
   table.subscribe((value) => {

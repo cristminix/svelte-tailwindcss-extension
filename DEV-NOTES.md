@@ -3,7 +3,7 @@ This project is ported version of LLFetcher built with svelte framework and atte
 
 # DEVELOPER NOTES
 
-This project currently developed under windows 11 OS and tested under Mozila Firefox 134.0.1
+This project currently developed under windows 11 OS and Ubuntu linux with the lates firefox on may 2025
 
 # Setup
 This project powered by `vite-plugin-web-extension` so you need to properly setup current configuration in `vite.config.ts`

@@ -8,19 +8,27 @@ class DrizzleModelRw extends DrizzleBaseModelRw {
     if (returning) {
       const results = await cursor().returning()
       const [row] = results
+      await this.commit()
       return row
       // return await this.getRow({ slug: row.slug })
     }
-    return await cursor()
+    const result = await cursor()
+    await this.commit()
+    return result
   }
   async delete(pk: number | string,returning=false) {
     const cursor = ()=> this.db.delete(this.schema).where(eq(this.schema[this.pk], pk))
     if(returning) {
       const results = await cursor().returning()
       const [row] = results
+      await this.commit()
+
       return row
     }
-    return await cursor()
+    const result = await cursor()
+
+    await this.commit()
+    return result
   }
   async create(row: Partial<Pick<typeof this.schema, "id" | "timestamp">> & Omit<typeof this.schema, "id" | "timestamp">,returning=false) {
     const cursor = ()=>this.db.insert(this.schema).values(row)
@@ -29,12 +37,10 @@ class DrizzleModelRw extends DrizzleBaseModelRw {
       const [row] = results
       return row
     }
-    return cursor()
-    // const success = await
-    // if (success) {
-    //   return await this.getRow({ slug: row.slug })
-    // }
-    // return success
+    const result = await cursor()
+
+    await this.commit()
+    return result
   }
 }
 

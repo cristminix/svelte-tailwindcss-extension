@@ -375,7 +375,7 @@ class DrizzleBaseModelRw {
     result = [...result]
     return result.length
   }
-  async getState(_limit = 5, _page = null, _filter = null, _search = null) {
+  async getState(_limit = 50, _page = null, _filter = null, _search = null) {
     let { limit, page, order, filter, search, orderBy, validSearch, searchType, searchField, searchQuery, hasFilter, hasSearch, hasPage, hasSearchAndFilter } = this.getListParam(
       _limit,
       _page,

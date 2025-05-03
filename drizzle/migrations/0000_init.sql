@@ -111,7 +111,10 @@ CREATE TABLE `toc` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`sectionId` integer NOT NULL,
 	`title` text NOT NULL,
-	`slug` text NOT NULL,
+    `slug` text NOT NULL,
+    `itemStar` text ,
+    `visibility` text ,
+    `vStatusUrn` text ,
 	`timestamp` text DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 --> statement-breakpoint

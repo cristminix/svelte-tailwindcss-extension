@@ -14,10 +14,11 @@
   import {getCourseInfoFromDoc} from "@/global/classes/course-api/fn/getCourseInfoFromDoc";
   import {getCourseAuthorsFromDoc} from "@/global/classes/course-api/fn/getCourseAuthorsFromDoc";
   import CourseInfoDetail from "@/options/pages/course/add-course-page/CourseInfoDetail.svelte";
-  import type {CourseAuthorInterface, CourseInfoInterface} from "@/global/classes/types";
+  import type {CourseAuthorInterface, CourseInfoInterface, TocInterface, TocSecInterface} from "@/global/classes/types";
   import {getCourseInfoLegacy} from "@/global/fn/course/legacy/parser/getCourseInfoLegacy";
   import {getCourseAuthorsLegacy} from "@/global/fn/course/legacy/parser/course/getCourseAuthorsLegacy";
   import ICRDQueueMan from "@/options/pages/course/add-course-page/ICRDQueueMan.svelte";
+  import {getCourseTocsLegacy} from "@/global/fn/course/legacy/parser/toc/getCourseTocsLegacy";
 
   export let store: DBStore
   export let params: any = null
@@ -30,6 +31,7 @@
   const mPrxCache = PrxCache.getInstance()
   let courseInfo = writable<CourseInfoInterface|null>(null)
   let courseAuthors = writable<CourseAuthorInterface[]>([])
+  let tocsBySections = writable<TocSecInterface>({})
   let icrdQueueManRef:ICRDQueueMan
 
 let fetchStateInfoRef: FetchStateInfo
@@ -49,6 +51,29 @@ let fetchStateInfoRef: FetchStateInfo
       }, "add-course-page")
     }
   })
+  function fetchCourseTocsSecs(courseInfo_:CourseInfoInterface|null,mode:string,docOrDs:any,courseSlug:string){
+    let tocsBySections : TocSecInterface= {}
+
+    if(courseInfo_){
+      if(Array.isArray(courseInfo_.sections)){
+        for (const section of courseInfo_.sections) {
+          const {itemStars,slug:sectionSlug} = section
+          let tocs : TocInterface[] | null = null
+          if(mode === "legacy") {
+            tocs = getCourseTocsLegacy(docOrDs,itemStars)
+          }else{
+            tocs = getCourseSectionTocsFromDoc(section,docOrDs,courseSlug)
+          }
+          if(Array.isArray(tocs)){
+            tocsBySections[sectionSlug as keyof TocSecInterface] = tocs
+          }else{
+            tocsBySections[sectionSlug as keyof TocSecInterface] = []
+          }
+        }
+      }
+    }
+    return tocsBySections
+  }
   async function onFetchCourseLegacy(slug: string) {
     const result = await mPrxCache.get(slug)
     const ds = result.content
@@ -56,12 +81,17 @@ let fetchStateInfoRef: FetchStateInfo
     const rows = getM3RecByType("com.linkedin.learning.api.deco.content.Course", ds)
     const courseInfoTMP = getCourseInfoLegacy(ds,slug)
     const courseAuthorsTMP = getCourseAuthorsLegacy(ds,slug)
+    const tocsBySectionsTMP : TocSecInterface= fetchCourseTocsSecs(courseInfoTMP,"legacy",ds,slug)
+
+    tocsBySections.update(o=> tocsBySectionsTMP)
+
     courseInfo.update(o=>courseInfoTMP)
     courseAuthors.update(o=> courseAuthorsTMP)
 
 
     console.info({ rows, ds })
   }
+
   async function onFetchCourse(slug: string) {
     // Implement non-legacy mode fetch logic here
     fetchStateInfoRef.setLoading(true)
@@ -76,7 +106,9 @@ let fetchStateInfoRef: FetchStateInfo
       // createDownloadFile( html,`${slug}.xml`)
       const courseInfoTMP =  getCourseInfoFromDoc(doc,slug)
       const courseAuthorsTMP =  getCourseAuthorsFromDoc(doc)
+      const tocsBySectionsTMP : TocSecInterface= fetchCourseTocsSecs(courseInfoTMP,"non-legacy",doc,slug)
 
+      tocsBySections.update(o=> tocsBySectionsTMP)
       courseInfo.update(o=>courseInfoTMP)
       courseAuthors.update(o=> courseAuthorsTMP)
       console.info({courseAuthorsTMP})
@@ -126,6 +158,6 @@ let fetchStateInfoRef: FetchStateInfo
     {onFetch}
     {onRetry}
   />
-  <CourseInfoDetail courseInfo={$courseInfo} courseAuthors={$courseAuthors}/>
+  <CourseInfoDetail courseInfo={$courseInfo} courseAuthors={$courseAuthors} tocsBySections={$tocsBySections}/>
   <ICRDQueueMan routeApp={routeApp} store={store} bind:this={icrdQueueManRef}/>
 {/if}

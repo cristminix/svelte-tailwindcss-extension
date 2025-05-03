@@ -100,3 +100,6 @@ export interface CourseAuthorInterface {
   shortBiography: string
 }
 
+export type TocSecInterface = {
+  [key: string]: TocInterface[]
+}

@@ -6,6 +6,9 @@ export const TocSchema = sqliteTable("toc", {
   sectionId: integer("sectionId").notNull(),
   title: text("title").notNull(),
   slug: text("slug").notNull(),
+  itemStar: text("itemStar"),
+  vStatusUrn: text("vStatusUrn"),
+  visibility: text("visibility"),
   timestamp: text("timestamp")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

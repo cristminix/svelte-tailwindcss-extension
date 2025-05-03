@@ -4,7 +4,7 @@ import { getTocDuration } from "./getTocDuration"
 import { getTocThumbnails } from "./getTocThumbnails"
 import { getTocVStatusUrn } from "./getTocVStatusUrn"
 
-export function getCourseTocs(ds: TM3Rec, itemStars: string[]) {
+export function getCourseTocsLegacy(ds: TM3Rec, itemStars: string[]) {
   const tocs: TocInterface[] = []
   if (ds) {
     for (const itemStar of itemStars) {

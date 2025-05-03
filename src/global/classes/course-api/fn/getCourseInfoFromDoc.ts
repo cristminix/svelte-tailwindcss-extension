@@ -4,6 +4,7 @@ import jQuery from "jquery";
 import type {CourseInfoInterface, ThumbnailInterface} from "@/global/classes/types";
 import {el2Obj} from "@/global/fn/course/el2Obj";
 import {getThumbUrlFromArtifact} from "@/global/fn/course/getThumbUrlFromArtifact";
+import {getCourseSectionsFromDoc} from "@/global/classes/course-api/fn/getCourseSectionsFromDoc";
 export function getCourseInfoFromDoc(doc: any,slug:string) {
     let courseInfo: CourseInfoInterface|null = null
     const [pp, courseUrn] = getCourseXmlParentElement(doc)
@@ -127,6 +128,7 @@ export function getCourseInfoFromDoc(doc: any,slug:string) {
             }
         }
         courseInfo.thumbnails = thumbnails
+        courseInfo.sections = getCourseSectionsFromDoc(doc)
         // const {title, slug, sourceCodeRepository, description, urn} = course
 
     }

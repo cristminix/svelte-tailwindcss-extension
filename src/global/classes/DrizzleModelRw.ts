@@ -35,6 +35,7 @@ class DrizzleModelRw extends DrizzleBaseModelRw {
     if(returning){
       const results = await cursor().returning()
       const [row] = results
+      await this.commit()
       return row
     }
     const result = await cursor()

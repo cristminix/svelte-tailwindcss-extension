@@ -8,13 +8,14 @@
   // import Pager from "@/components/shared/Pager.svelte";
   // import Grid from "@/components/shared/Grid.svelte";
   // import { makeDelay } from "@/global/fn";
-  import config from "./config.json"
+  // import config from "./config.json"
   import GridTable from "@/global/components/grid/GridTable.svelte"
   import Pager from "@/global/components/grid/Pager.svelte"
-  import type { GridOptionsInterface, IGridData } from "@/global/components/grid/types"
+  import type { GridOptionsInterface, IGridData, OptionalGridOptionsInterface } from "@/global/components/grid/types"
   import { writable } from "svelte/store"
   import type DrizzleDB from "@/global/db/models/DrizzleDB"
   import type DBStore from "@/global/db/DBStore"
+  import configTables from "./config.json"
 
   export let store: DBStore
   // export let table
@@ -29,12 +30,12 @@
   let editorFactoryRefs: any = {}
   let grid = writable<IGridData>({
     records: [],
-    limit: 50,
+    limit: 600,
     page: 1,
     totalPages: 0,
     totalRecords: 0,
     orderBy: "key",
-    orderDir: "asc",
+    orderDir: "desc",
   })
   const model = writable<DrizzleDB | null>(null)
   let table = writable<string | null>(null)
@@ -64,14 +65,19 @@
     
     })
   }
-
-  const setModelAndConf = (table: string) => {
+  interface ConfigItem {
+    gridOptions: OptionalGridOptionsInterface; 
+}
+  const setModelAndConf = (configTableKey: string) => {
     loading.update((o) => true)
     // model = null
     // conf = null
-    const tables = config.tables as any
+    const tables = configTables.tables as any
     const tableConf = tables[$table as keyof typeof tables]
     // console.log({ tables, tableConf, table: $table })
+    const itemGridOptions =  tableConf? tableConf.gridOptions:null//getGridOptions(configTables.tables,configTableKey)
+    // console.log({itemGridOptions})
+    gridOptions.update(o=>({...defaultGridOptions,...itemGridOptions}))
     if (tableConf) {
       const modelName = tableConf.model
       console.log(modelName)
@@ -80,7 +86,7 @@
       conf.update((o) => tableConf)
       if (modelSet) model.update((o) => modelSet)
     } else {
-      errorMessage = `No config set for ${table} table`
+      errorMessage = `No config set for ${configTableKey} table`
     }
     loading.update((o) => false)
   }
@@ -139,7 +145,7 @@
     */
   }
   let deleteActionDynamicComponent:any
-  const gridOptions = writable<GridOptionsInterface>({
+  const defaultGridOptions :GridOptionsInterface= {
     routeApp,
     numberWidthCls: "",
     actionWidthCls: "",
@@ -194,7 +200,8 @@
           */
       },
     },
-  })
+  }
+  const gridOptions = writable<GridOptionsInterface>({...defaultGridOptions})
 
   model.subscribe((value) => {
     if (value) {

@@ -9,12 +9,10 @@ import {
 
 export type TProcessQueueSectionResult ={
     sections:TSection[],
-    tocSections:TocSecInterface
 }
 export async function processQueueSection(mSection:MSection,sections:SectionInterface[],courseId:number){
     let results:TProcessQueueSectionResult = {
-        sections:[],
-        tocSections:{}
+        sections:[] 
     }
     for(const section of sections){
         const {title,slug,itemStars} = section

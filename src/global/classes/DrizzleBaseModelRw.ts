@@ -137,6 +137,9 @@ class DrizzleBaseModelRw {
   }
   async commit() {
     if (this.sqldb) return await this.sqldb.commit()
+      else{
+        console.log("sqldb not set unable to commit")
+        return null}
   }
 
   getAll() {

@@ -6,7 +6,7 @@
   import { niceScrollbarCls } from "@/options/components/ux/cls"
   import GridTable from "@/global/components/grid/GridTable.svelte"
   import Pager from "@/global/components/grid/Pager.svelte"
-  import type { GridOptionsInterface, IGridData } from "@/global/components/grid/types"
+  import type { GridOptionsInterface, IGridData, OptionalGridOptionsInterface } from "@/global/components/grid/types"
   import { writable } from "svelte/store"
   import DBStore from "@/global/db/DBStore"
   import type RoutesApp from "@/options/components/RoutesApp.svelte"
@@ -15,8 +15,10 @@
   export let store: DBStore
   export let config: any
   export let routeApp: RoutesApp
+  import configTables from "./config.json"
+
   const schema = {
-    availables: ["App", "Setting", "Author", "Course", "Section", "Toc", "ExerciseFile", "StreamLocation", "Transcript", "Thumbnail", "PrxCache", "QState", "DMSetup", "DMStatus"],
+    availables: ["App", "Setting", "Author", "Course","AuthorCourse",  "Section", "Toc", "ExerciseFile", "StreamLocation", "Transcript", "Thumbnail", "PrxCache", "QState", "DMSetup", "DMStatus"],
   }
   interface TRowData {
     table: string
@@ -67,13 +69,15 @@
     console.log(item)
   }
   */
-  const gridOptions: GridOptionsInterface = {
+ 
+  const gridOptions = writable<GridOptionsInterface> ({
     routeApp,
     numberWidthCls: "",
     actionWidthCls: "",
     widthCls: ["1/4", "3/4", "3/4"],
     headers: ["Table Name", "Table Size", "Row Counts"],
     fields: ["table", "size", "counts"],
+    fieldTypes: ["string", "string", "number"],
     enableEdit: false,
     enableActions: false,
     callbackActions: {
@@ -81,16 +85,19 @@
       //   return ''
       // },
     },
-  }
+    enableDelete:false
 
-  const getTableSize = async (table: string) => {
+  })
+
+  const getTableSizeByModelName = async (modelName: string) => {
     let result: any
-    if (table == "PrxCache") {
+    if (modelName == "PrxCache") {
       // sSize = 0 //await store.get("PrxCache").getSize()
     } else {
-      const model = store.get<DrizzleDB>(table)
+      const model = store.get<DrizzleDB>(modelName)
       if (model) {
-        //const tableName = model.schema
+        const tableName = model.schema
+        console.log({ tableName })
         result = await model.getDataSize()
       }
     }
@@ -105,14 +112,14 @@
 
     for (const table of schema.availables) {
       const desc = ""
-      const result = await getTableSize(table)
+      const result = await getTableSizeByModelName(table)
       const { size, counts } = result
       const item: TRowData = { table, desc, size: formatBytes(size), counts }
       newGrid.records.push(item)
       tableSize += size
     }
-    storageSz.update((o) => formatBytes(tableSize))
     setTimeout(() => {
+      storageSz.update((o) => formatBytes(tableSize))
       grid.update((o) => newGrid)
       loading.update((o) => false)
     }, 512)
@@ -167,7 +174,7 @@
     <div class={"-m-1.5 overflow-x-auto " + niceScrollbarCls}>
       <div class="p-1.5 min-w-full inline-block align-middle">
         {#if !$loading}
-          <GridTable options={gridOptions} records={$grid.records} page={$grid.page} limit={$grid.limit} />
+          <GridTable options={$gridOptions} records={$grid.records} page={$grid.page} limit={$grid.limit} />
         {/if}
       </div>
     </div>

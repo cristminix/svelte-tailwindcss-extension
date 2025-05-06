@@ -72,6 +72,7 @@ let fetchStateInfoRef: FetchStateInfo
         }
       }
     }
+    console.log({tocsBySections})
     return tocsBySections
   }
   async function onFetchCourseLegacy(slug: string) {
@@ -131,7 +132,7 @@ let fetchStateInfoRef: FetchStateInfo
       toastRef.add("Fetch completed successfully")
       if(icrdQueueManRef){
         if($courseInfo !== null)
-        await icrdQueueManRef.processQueue($courseInfo,$courseAuthors)
+        await icrdQueueManRef.processQueue($courseInfo,$courseAuthors,$tocsBySections)
       }
     } catch (error: unknown) {
       if (error instanceof Error) {

@@ -21,9 +21,12 @@
       "listMethod": "getList"
     },
     "thumbnail": {
-      "headers": ["Parent Id", "kind", "size", "Url", "Expires At"],
+      "headers": ["Parent Id", "kind", "size", "Preview", "Expires At"],
       "fields": ["parentId", "kind", "size", "url", "expiresAt"],
       "model": "Thumbnail",
+      "gridOptions":{
+        "fieldTypes": ["string", "string", "string", "image", "string"]
+      },
 
       "listMethod": "getList"
     },

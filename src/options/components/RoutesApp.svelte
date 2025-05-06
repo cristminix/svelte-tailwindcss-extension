@@ -50,6 +50,11 @@
   export function triggerRouteChange(path: string, queryString: string | null) {
     Object.keys(routeChangeCallbacks).forEach((key) => routeChangeCallbacks[key](path, queryString))
   }
+  export function triggerRouteChangeKey(inputKey: string) {
+    if (routeChangeCallbacks[inputKey]) {
+      routeChangeCallbacks[inputKey]($url, $queryString)
+    }
+  }
   url.subscribe((value) => {
     const [path, queryString] = getRoute(value)
     lastPath.update((o) => path)
@@ -83,7 +88,7 @@
 </script>
 
 <div>
-  <label class="input input-bordered flex items-center gap-2">
+  <label class="input input-bordered flex items-center gap-2 hidden">
     Address:
     <input bind:value={$url} type="text" class="grow" placeholder="url" />
   </label>

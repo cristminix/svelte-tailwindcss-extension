@@ -16,7 +16,9 @@ class DrizzleDB extends DrizzleModelRw {
 
       if (this.sqldb) {
         const db = this.sqldb.getSqlDB()
-        const result = db.exec(`SELECT ${sqlStr} AS row_size FROM ${tableName} LIMIT 10`)
+        const sql = `SELECT ${sqlStr} AS row_size FROM ${tableName} LIMIT 10`
+        // console.log({sql})
+        const result = db.exec(sql)
         if (rowCount) counts = rowCount
         if (rowCount && result.length > 0) {
           let totalRowSize = result[0].values.reduce((sum: number, row: any) => sum + row[0], 0)

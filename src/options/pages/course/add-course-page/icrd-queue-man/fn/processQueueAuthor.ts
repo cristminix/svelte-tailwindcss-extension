@@ -5,7 +5,7 @@ import {
     insertAuthor,
     updateAuthor
 } from "@/options/pages/course/add-course-page/icrd-queue-man/tasks/author";
-import type {TAuthor, TAuthorN, TAuthorU} from "@/global/db/models/schema";
+import type {TAuthor, TAuthorCourse, TAuthorN, TAuthorU} from "@/global/db/models/schema";
 import {
     checkAuthorCourseExists
 } from "@/options/pages/course/add-course-page/icrd-queue-man/tasks/author-course/checkAuthorCourseExists";
@@ -14,8 +14,12 @@ import {
     insertAuthorCourse
 } from "@/options/pages/course/add-course-page/icrd-queue-man/tasks/author-course/insertAuthorCourse";
 
+export type TProcessQueueAuthorResult = {
+    authors: TAuthor[],
+    authorCourses: TAuthorCourse[]
+}
 export async function processQueueAuthor(mAuthorCourse:MAuthorCourse,mAuthor:MAuthor,courseId:number,authors:CourseAuthorInterface[]){
-    let results:any = {
+    let results:TProcessQueueAuthorResult = {
         authors:[],
         authorCourses:[]
     }

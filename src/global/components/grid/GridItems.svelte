@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from "svelte";
   import GridActions from "./GridActions.svelte"
   import GridItemEmpty from "./GridItemEmpty.svelte"
   import type { GridOptionsInterface } from "./types"
@@ -18,7 +19,7 @@
 
   function getFieldText(field: string, fieldIndex: number, item: any, index: number) {
     let value = item[field]
-    console.log({ item, value })
+    // console.log({ item, value })
     try {
       value = typeof value == "object" ? JSON.stringify(value) : value.toString()
     } catch (e) {}
@@ -55,6 +56,9 @@
       }
     }
   }
+  onMount(() => {
+    console.log({options})
+  })
 </script>
 
 {#if empty}
@@ -67,7 +71,18 @@
       </td>
       {#each options.fields as field, fieldIndex}
         {@const fieldText = getFieldText(field, fieldIndex, item, index)}
-        <td class={tdCls}>{fieldText}</td>
+        <td class={tdCls}>
+          {#if Array.isArray(options.fieldTypes)}
+            {#if options.fieldTypes[fieldIndex] === "image"}
+              <img src={fieldText} class="w-10 h-10 rounded-full" />
+            {:else}
+              {fieldText}
+            {/if}
+            <!-- Add content here if needed -->
+          {:else}
+            {fieldText} 
+          {/if}
+        </td>
       {/each}
       {#if options.enableActions}
         <td class={tdCls2}>

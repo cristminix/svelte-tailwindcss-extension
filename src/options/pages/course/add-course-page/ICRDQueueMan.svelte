@@ -6,12 +6,13 @@
     import type MToc from "@/global/db/models/MToc";
     import type MExerciseFile from "@/global/db/models/MExerciseFile";
     import type MThumbnail from "@/global/db/models/MThumbnail";
-    import type {AuthorInterface, CourseAuthorInterface, CourseInfoInterface} from "@/global/classes/types";
+    import type {AuthorInterface, CourseAuthorInterface, CourseInfoInterface, TocSecInterface} from "@/global/classes/types";
     import {processCourseQueue} from "./icrd-queue-man/fn/processCourseQueue";
     import type MAuthorCourse from "@/global/db/models/MAuthorCourse";
     import {processQueueAuthor} from "@/options/pages/course/add-course-page/icrd-queue-man/fn/processQueueAuthor";
     import Button from "@/global/components/ux/Button.svelte";
     import {onMount} from "svelte";
+    import { processQueueSection, processQueueToc } from "./icrd-queue-man/fn";
 
     export let routeApp: any = null
     
@@ -28,12 +29,31 @@
     // let menus: any = []
 
 
-    export async function processQueue(courseInfo:CourseInfoInterface,authors:CourseAuthorInterface[]){
-        let resultTmp:any = await processCourseQueue(mCourse,courseInfo)
-        console.log({processCourseQueue:resultTmp})
-        const {id:courseId} = resultTmp
-        resultTmp = await processQueueAuthor(mAuthorCourse,mAuthor,courseId,authors)
-        console.log({processQueueAuthor:resultTmp})
+    export async function processQueue(courseInfo:CourseInfoInterface,authors:CourseAuthorInterface[],tocsBySections:TocSecInterface){
+        const resultPQC = await processCourseQueue(mCourse,courseInfo)
+        console.log({processCourseQueue:resultPQC})
+        const {id:courseId} = resultPQC
+        const resultPQA = await processQueueAuthor(mAuthorCourse,mAuthor,courseId,authors)
+        console.log({processQueueAuthor:resultPQA})
+        if(Array.isArray(courseInfo.sections)&& Object.keys(tocsBySections).length > 0){
+            const {sections:inputSections} = courseInfo
+            const resultPQS = await processQueueSection(mSection,inputSections,courseId)
+            const {sections:sectionRecs} = resultPQS
+            console.log({processQueueSection:resultPQS})
+
+            for (const sectionRec of sectionRecs) {
+                const {id:sectionId,slug:sectionSlug} = sectionRec
+                const tocs = tocsBySections[sectionSlug]
+                const resultPQT = await processQueueToc(mToc,tocs,sectionId)
+                console.log({processQueueToc:resultPQT})
+            }
+            
+        }else{
+            console.log("No sections found")
+        }
+        if(routeApp){
+            routeApp.triggerRouteChangeKey("menu")
+        }
     }
     onMount(() => {
         if (store.isReady()) {

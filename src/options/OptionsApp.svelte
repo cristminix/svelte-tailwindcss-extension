@@ -20,8 +20,9 @@
   import FileManagerPage from "./pages/FileManagerPage.svelte"
   import DBExplorer from "./pages/db-explorer/DBExplorer.svelte"
   import DBTableManager from "./pages/db-explorer/DBTableManager.svelte"
+  import { param } from "jquery"
 
-  let routeApp: SvelteComponent
+  let routeApp: RoutesApp
   let queryString = writable<string | null>(null)
   let routeParams = writable<any>(null)
 
@@ -83,6 +84,7 @@
   }
   function onRouteChange(path: string, _queryString: string | null) {
     const [routeKeyFound, params] = matchRoute(path)
+    // page = NotFound
     if (routeKeyFound) {
       routeParams.update((o) => params)
       page = routingMap[routeKeyFound]
@@ -91,12 +93,8 @@
     }
     queryString.update((o) => _queryString)
     try {
-    if (routeApp) routeApp.triggerRouteChange(path, _queryString)
-      
-    } catch (error) {
-      
-    }
-
+      if (routeApp) routeApp.triggerRouteChange(path, _queryString)
+    } catch (error) {}
   }
 </script>
 
@@ -108,5 +106,12 @@
 
 <Template {routeApp} store={dbStore}>
   <RoutesApp bind:this={routeApp} {onRouteChange} />
-  <svelte:component this={page} queryString={$queryString} params={$routeParams} store={dbStore} routeApp={routeApp}/>
+  <svelte:component
+    this={page}
+    queryString={$queryString}
+    params={$routeParams}
+    store={dbStore}
+    {routeApp}
+    sourceParam={routeParams}
+  />
 </Template>

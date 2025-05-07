@@ -1,26 +1,36 @@
-import {ExerciseFileSchema, type TExerciseFile} from "./schema"
+import { ExerciseFileSchema, type TExerciseFile } from "./schema"
 import DrizzleDB from "./DrizzleDB"
+import { eq } from "drizzle-orm"
 
 class MExerciseFile extends DrizzleDB {
   schema = ExerciseFileSchema
-  async exists(courseId:number,name:string,returnId = false) {
-    if(returnId){
-        const exerciseFile :TExerciseFile|null = await this.getRow({ courseId, name })
-        if(exerciseFile){
-            return exerciseFile.id
-        }else{
-            return 0
-        }
+  async exists(courseId: number, name: string, returnId = false) {
+    if (returnId) {
+      const exerciseFile: TExerciseFile | null = await this.getRow({
+        courseId,
+        name,
+      })
+      if (exerciseFile) {
+        return exerciseFile.id
+      } else {
+        return 0
+      }
     }
-    return (await this.count({ courseId,name })) > 0
+    return (await this.count({ courseId, name })) > 0
   }
   getByNameAndCourseId(name: string, courseId: number) {
     // return this.singleQuery({query: {name,courseId}})
   }
   getListByCourseId(courseId: number) {
-    // return this.query({query:{courseId}})
+    const condition = eq(this.schema.courseId, courseId)
+    return this.db.select().from(this.schema).where(condition)
   }
-  async createLegacy(name: string, url: string, size: number, courseId: number) {
+  async createLegacy(
+    name: string,
+    url: string,
+    size: number,
+    courseId: number
+  ) {
     /*
     let exerciseFile = this.getByNameAndCourseId(name,courseId)
 

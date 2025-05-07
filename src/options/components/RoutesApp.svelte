@@ -25,7 +25,9 @@
       queryString: $queryString,
     }
   }
-  export const getRoute = (url: string | null = null): [string, string | null] => {
+  export const getRoute = (
+    url: string | null = null
+  ): [string, string | null] => {
     const currentUrl = !url ? $url : url
     const routeSplit = currentUrl.split("?")
 
@@ -40,7 +42,11 @@
   }
   let routeChangeCallbacks: any = {}
   let routeChangeCallbacksKeep: any = {}
-  export const addRouteChangeCallback = (callback: any, key: string, keep = false) => {
+  export const addRouteChangeCallback = (
+    callback: any,
+    key: string,
+    keep = false
+  ) => {
     routeChangeCallbacks[key] = callback
     routeChangeCallbacksKeep[key] = keep
   }
@@ -48,7 +54,9 @@
     console.log(path, queryString)
   }
   export function triggerRouteChange(path: string, queryString: string | null) {
-    Object.keys(routeChangeCallbacks).forEach((key) => routeChangeCallbacks[key](path, queryString))
+    Object.keys(routeChangeCallbacks).forEach((key) =>
+      routeChangeCallbacks[key](path, queryString)
+    )
   }
   export function triggerRouteChangeKey(inputKey: string) {
     if (routeChangeCallbacks[inputKey]) {
@@ -61,20 +69,19 @@
     lastQueryString.update((o) => queryString)
     onRouteChange(path, queryString)
   })
- 
-  let routeChangesTimer:any = null
-  let routeChangesClock:number = 0
-  const routeChangesTimeout:number = 2000
-  const watchRouteChanges = ()=>{
-    if(routeChangesTimer) return
+
+  let routeChangesTimer: any = null
+  let routeChangesClock: number = 0
+  const routeChangesTimeout: number = 2000
+  const watchRouteChanges = () => {
+    if (routeChangesTimer) return
     clearInterval(routeChangesTimer)
-    routeChangesTimer = setInterval(async ()=>{
+    routeChangesTimer = setInterval(async () => {
       // console.log(`route changes watcher is running ${routeChangesClock}`)
-      routeChangesClock+=1
+      routeChangesClock += 1
       const lastUrl = await idb.get("route.url")
       if (lastUrl && lastUrl != $url) setRoute(lastUrl as string)
-    },routeChangesTimeout)
-
+    }, routeChangesTimeout)
   }
 
   onMount(() => {
@@ -88,7 +95,7 @@
 </script>
 
 <div>
-  <label class="input input-bordered flex items-center gap-2 hidden">
+  <label class="input input-bordered flex items-center gap-2 mb-4">
     Address:
     <input bind:value={$url} type="text" class="grow" placeholder="url" />
   </label>

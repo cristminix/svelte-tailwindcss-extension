@@ -1,12 +1,21 @@
-import {ThumbnailSchema, type TThumbnail, type TThumbnailN, type TThumbnailU} from "./schema"
+import {
+  ThumbnailSchema,
+  type TThumbnail,
+  type TThumbnailN,
+  type TThumbnailU,
+} from "./schema"
 import DrizzleDB from "./DrizzleDB"
 import { and, eq } from "drizzle-orm"
 
 class MThumbnail extends DrizzleDB {
   schema = ThumbnailSchema
-  async exists(size: string, parentId: number, kind: string,returnId = false) {
+  async exists(size: string, parentId: number, kind: string, returnId = false) {
     if (returnId) {
-      const thumbnail: TThumbnail | null = await this.getRow({ size, parentId, kind })
+      const thumbnail: TThumbnail | null = await this.getRow({
+        size,
+        parentId,
+        kind,
+      })
       if (thumbnail) {
         return thumbnail.id
       } else {
@@ -19,7 +28,9 @@ class MThumbnail extends DrizzleDB {
     return await this.db
       .select()
       .from(this.schema)
-      .where(and(eq(this.schema.kind, kind), eq(this.schema.parentId, parentId)))
+      .where(
+        and(eq(this.schema.kind, kind), eq(this.schema.parentId, parentId))
+      )
   }
   async getBySize(size: string, parentId: number, kind: string) {
     // console.log(`called`, { table: this.schema })
@@ -68,7 +79,12 @@ class MThumbnail extends DrizzleDB {
   getById(id: number) {
     // return this.singleQuery({ query: { id } })
   }
-  async createLegacy(courseId: number, size: number, url: string, expiresAt: number | null) {
+  async createLegacy(
+    courseId: number,
+    size: number,
+    url: string,
+    expiresAt: number | null
+  ) {
     /*
     let row = this.getBySizeAndCourseId(size, courseId)
     if (!row) {

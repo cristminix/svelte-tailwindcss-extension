@@ -13,11 +13,11 @@ export async function processQueueToc(mToc:MToc,tocs:TocInterface[],sectionId:nu
         const {title,slug,itemStar,vStatusUrn,visibility} = toc
         let tocId = await checkTocExists(mToc,sectionId,slug)
         let tocRec:TToc
+        const row = {title,slug,itemStar,vStatusUrn,visibility, sectionId}
+
         if(tocId) {
-            const row = {title,slug,itemStar,vStatusUrn,visibility, sectionId}
             tocRec = await updateToc(mToc,tocId, row)
         }else {
-            const row = {title,slug,itemStar,vStatusUrn,visibility, sectionId}
             tocRec = await insertToc(mToc,row)
         }
         results.tocs.push(tocRec)

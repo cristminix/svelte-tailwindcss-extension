@@ -25,23 +25,23 @@ class MThumbnail extends DrizzleDB {
     // console.log(`called`, { table: this.schema })
     return await this.getRow({ size, parentId, kind })
   }
-  async update(pk: number | string, row: TThumbnailU) {
-    const condition = eq(this.schema.id, pk as number)
-    const success = await this.db.update(this.schema).set(row).where(condition)
-    const { size, parentId, kind } = row
-    if (success) {
-      return await this.getRow({ size, parentId, kind })
-    }
-    return null
-  }
-  async create(row: TThumbnailN) {
-    const success = await this.db.insert(this.schema).values(row)
-    const { size, parentId, kind } = row
-    if (success) {
-      return await this.getRow({ size, parentId, kind })
-    }
-    return null
-  }
+  // async update(pk: number | string, row: TThumbnailU) {
+  //   const condition = eq(this.schema.id, pk as number)
+  //   const success = await this.db.update(this.schema).set(row).where(condition)
+  //   const { size, parentId, kind } = row
+  //   if (success) {
+  //     return await this.getRow({ size, parentId, kind })
+  //   }
+  //   return null
+  // }
+  // async create(row: TThumbnailN, returnId = false) {
+  //   const cursor = this.db.insert(this.schema).values(row)
+  //   const { size, parentId, kind } = row
+  //   if (returnId) {
+  //     return await this.getRow({ size, parentId, kind })
+  //   }
+  //   return null
+  // }
   async deleteByCourseId(courseId: number) {
     // await this.deleteRows({ courseId })
   }

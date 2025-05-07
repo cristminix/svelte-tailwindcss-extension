@@ -13,6 +13,8 @@
     import Button from "@/global/components/ux/Button.svelte";
     import {onMount} from "svelte";
     import { processQueueSection, processQueueToc } from "./icrd-queue-man/fn";
+    import { processQueueExerciseFile } from "./icrd-queue-man/fn/processQueueExerciseFile";
+    import { processQueueThumbnail } from "./icrd-queue-man/fn/processQueueThumbnail";
 
     export let routeApp: any = null
     
@@ -35,6 +37,26 @@
         const {id:courseId} = resultPQC
         const resultPQA = await processQueueAuthor(mAuthorCourse,mAuthor,courseId,authors)
         console.log({processQueueAuthor:resultPQA})
+        // process exercise files
+        const {exerciseFiles} = courseInfo
+        if(Array.isArray(exerciseFiles)){
+            if(exerciseFiles.length > 0){
+                const resultPQEF = await processQueueExerciseFile(mExFile,exerciseFiles,courseId)
+                console.log({processQueueExerciseFile:resultPQEF})
+            }
+        } 
+        // process thumbnails
+
+        const {thumbnails} = courseInfo
+        if(Array.isArray(thumbnails)){
+            if(thumbnails.length > 0){
+                const resultPQTMB = await processQueueThumbnail(mThumbnail,thumbnails,courseId)
+                console.log({processQueueThumbnail:resultPQTMB})
+            }
+            
+        }
+        
+        
         if(Array.isArray(courseInfo.sections)&& Object.keys(tocsBySections).length > 0){
             const {sections:inputSections} = courseInfo
             const resultPQS = await processQueueSection(mSection,inputSections,courseId)

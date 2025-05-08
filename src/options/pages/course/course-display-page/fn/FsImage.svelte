@@ -20,13 +20,13 @@
       loaded.set(false)
     }
   }
-  // onMount(() => {
-  //   loadBase64()
-  //   return () => {
-  //     loaded.set(false)
-  //     base64.set("")
-  //   }
-  // })
+  onMount(() => {
+    loadBase64()
+    return () => {
+      loaded.set(false)
+      base64.set("")
+    }
+  })
   $: {
     // console.log("Prop changed:", path)
     loadBase64()

@@ -27,11 +27,12 @@
   import { getCourseAuthorsLegacy } from "@/global/fn/course/legacy/parser/course/getCourseAuthorsLegacy"
   import ICRDQueueMan from "@/options/pages/course/add-course-page/ICRDQueueMan.svelte"
   import { getCourseTocsLegacy } from "@/global/fn/course/legacy/parser/toc/getCourseTocsLegacy"
+  import RoutesApp from "@/options/components/RoutesApp.svelte";
 
   export let store: DBStore
   export let params: any = null
   export let queryString: string = ""
-  export let routeApp: any = null
+  export let routeApp: RoutesApp
 
   let toastRef: Toast
   const loading = writable(true)
@@ -114,15 +115,13 @@
 
   async function onFetchCourse(slug: string) {
     // Implement non-legacy mode fetch logic here
-    fetchStateInfoRef.setRunLevel(1)
+
 
     const { doc, statusCode, errorMessage } = await fetchXmlDoc(
       courseUrlFromSlug(slug),
       true
     )
-    fetchStateInfoRef.setStatusCode(statusCode)
-    fetchStateInfoRef.setLoading(false)
-    fetchStateInfoRef.setRunLevel(2)
+
     if (statusCode === 200) {
       // const html = doc.html()
       // createDownloadFile( html,`${slug}.xml`)
@@ -144,6 +143,10 @@
   async function onFetch() {
     fetchStateInfoRef.setLoading(true)
 
+    fetchStateInfoRef.setRunLevel(1)
+    fetchStateInfoRef.setStatusCode(200)
+
+
     const searchParams = getUrlSearchParams(queryString) as any
     // console.log(searchParams.legacyMode)
     const legacyMode = searchParams.legacyMode === "true"
@@ -157,12 +160,16 @@
       }
       toastRef.add("Fetch completed successfully")
       if (icrdQueueManRef) {
-        if ($courseInfo !== null)
-          await icrdQueueManRef.processQueue(
-            $courseInfo,
-            $courseAuthors,
-            $tocsBySections
+        if ($courseInfo !== null) {
+          const {courseId} = await icrdQueueManRef.processQueue(
+                  $courseInfo,
+                  $courseAuthors,
+                  $tocsBySections
           )
+          if (routeApp) {
+            routeApp.navigate(`/course/display/${courseId}/${slug}`)
+          }
+        }
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -172,6 +179,7 @@
       }
     }
     fetchStateInfoRef.setLoading(false)
+    fetchStateInfoRef.setRunLevel(2)
   }
 
   function onRetry() {

@@ -83,7 +83,9 @@
       if (lastUrl && lastUrl != $url) setRoute(lastUrl as string)
     }, routeChangesTimeout)
   }
-
+  export const navigate = (newUrl: string) => {
+    idb.set("route.url",newUrl)
+  }
   onMount(() => {
     const loadLastUrl = async () => {
       const lastUrl = await idb.get("route.url")

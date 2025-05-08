@@ -64,10 +64,14 @@
       exerciseFiles: exerciseFiles_,
       thumbnails: thumbnails_,
     } = courseDetailsRec
-    course.update((o) => course_)
-    authors.update((o) => authors_)
-    exerciseFiles.update((o) => exerciseFiles_)
-    thumbnails.update((o) => thumbnails_)
+    thumbnails.update((o) => [])
+
+    setTimeout(() => {
+      course.update((o) => course_)
+      authors.update((o) => authors_)
+      exerciseFiles.update((o) => exerciseFiles_)
+      thumbnails.update((o) => thumbnails_)
+    }, 512)
   }
   onMount(() => {
     store.onReady(() => {

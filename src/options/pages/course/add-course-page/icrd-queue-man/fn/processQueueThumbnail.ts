@@ -25,20 +25,24 @@ async function downloadThumbnail(url: string, dst: string) {
         if (ENABLE_DEBUG) console.log(`mkdir:${dst}`)
         await fs.mkdirSync(dst)
       }
-      const blob: any = await fetch(url).then((res) => res.blob())
-      if (blob) {
-        const filename = createBlobeFilename(url, blob)
-        blob.name = filename
-        blob.lastModified = new Date()
-        const file = new File([blob], "image.jpeg", {
-          type: blob.type,
-        })
-        const buffer = await file.arrayBuffer()
-        path = `${dst}/${filename}`
-        await fs.writeFileSync(path, new Uint8Array(buffer))
-        if (ENABLE_DEBUG) console.log(`downloaded thumbnail: ${path}`)
-        console.log("Blob:", blob)
+      const res = await fetch(url)
+      if(res.status === 200) {
+        const blob = await res.blob()
+        if (blob) {
+          const filename = createBlobeFilename(url, blob)
+          // blob.name = filename
+          // blob.lastModified = new Date()
+          const file = new File([blob], "image.jpeg", {
+            type: blob.type,
+          })
+          const buffer = await file.arrayBuffer()
+          path = `${dst}/${filename}`
+          await fs.writeFileSync(path, new Uint8Array(buffer))
+          if (ENABLE_DEBUG) console.log(`downloaded thumbnail: ${path}`)
+          // console.log("Blob:", blob)
+        }
       }
+
     }
   } catch (error) {
     console.error("Error downloading thumbnail:", error)

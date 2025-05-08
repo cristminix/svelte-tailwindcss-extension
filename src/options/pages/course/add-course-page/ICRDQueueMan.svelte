@@ -76,6 +76,7 @@
         if(routeApp){
             routeApp.triggerRouteChangeKey("menu")
         }
+        return {courseId}
     }
     onMount(() => {
         if (store.isReady()) {

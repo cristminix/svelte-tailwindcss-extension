@@ -19,6 +19,8 @@
   import { data } from "jquery"
   import type MAuthor from "@/global/db/models/MAuthor"
   import type MAuthorCourse from "@/global/db/models/MAuthorCourse"
+  import Fs from "@/global/classes/Fs"
+  import FsImage from "./course-display-page/fn/FsImage.svelte"
 
   export let params: any
   export let queryString: any
@@ -26,7 +28,7 @@
   export let store: DBStore
   export let sourceParam: any
   // const courseDetail = writable<TGetCourseDetailResult | null>(null)
-
+  const fs = new Fs("fs")
   let course = writable<TCourse | null>(null)
   let authors = writable<TAuthor[]>([])
   let exerciseFiles = writable<TExerciseFile[]>([])
@@ -72,14 +74,14 @@
       console.log("DBStore is ready", params)
       loadData(params.id)
     })
-    if (sourceParam) {
-      sourceParam.subscribe((o) => {
-        console.log("sourceParam", o)
-        if (o && o.id) {
-          loadData(o.id)
-        }
-      })
-    }
+    // if (sourceParam) {
+    //   sourceParam.subscribe((o) => {
+    //     console.log("sourceParam", o)
+    //     if (o && o.id) {
+    //       loadData(o.id)
+    //     }
+    //   })
+    // }
     if (routeApp) {
       // routeApp.addRouteChangeCallback(() => {
       //   const [a, self] = arguments
@@ -88,14 +90,34 @@
       // }, "course-display-page")
     }
   })
+  $: {
+    loadData(params.id)
+  }
 </script>
 
-<code>
+<!-- <code>
   [{JSON.stringify(params)}]
-</code>
+</code> -->
 <div class="course-detail-page">
   <JsonView json={$course} />
+  {#if course}
+    <h3 class="text-xl mb-2">{$course?.title}</h3>
+    <p>{$course?.description}</p>
+  {/if}
   <JsonView json={$authors} />
-  <JsonView json={$thumbnails} />
+  <!-- <JsonView json={$thumbnails} /> -->
+  <h4>Thumbnail</h4>
+  {#each $thumbnails as thumbnail}
+    {#if thumbnail.path}
+      <div class="thumbnail-item">
+        <FsImage
+          {fs}
+          path={thumbnail.path}
+          alt={thumbnail.path}
+          title={thumbnail.size}
+        />
+      </div>
+    {/if}
+  {/each}
   <JsonView json={$exerciseFiles} />
 </div>

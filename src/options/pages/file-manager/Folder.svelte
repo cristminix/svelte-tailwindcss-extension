@@ -1,11 +1,17 @@
 <script lang="ts">
   import { writable } from "svelte/store"
   import { onMount } from "svelte"
-  import type { TFolderFileCreationFn, TFolderItem, TIsSelectedFn, TOnSelectFn, TSetExpandFn } from "../types"
+  import type {
+    TFolderFileCreationFn,
+    TFolderItem,
+    TIsSelectedFn,
+    TOnSelectFn,
+    TSetExpandFn,
+  } from "../types"
 
   export let isSelected: TIsSelectedFn
   export let onSelect: TOnSelectFn
-  export let data: TFolderItem
+  export let data: TFolderItem | TFolderItem[] | null
   export let isRoot: boolean
   export let setExpand: TSetExpandFn
 
@@ -83,7 +89,9 @@
       class="file {isSelected(data.id) ? 'selected' : ''}"
     >
       <i class="fa fa-file mr-2" />
-      <span class="filename">{data.name}</span>
+      <span class="filename {isSelected(data.id) ? 'selected' : ''}"
+        >{data.name}</span
+      >
     </button>
   {/if}
 {/if}

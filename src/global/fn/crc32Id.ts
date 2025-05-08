@@ -17,7 +17,7 @@ for (let i = 0; i < 256; i++) {
   CRC32_TABLE[i] = crc
 }
 
-function crc32(data: Uint8Array): number {
+export function crc32(data: Uint8Array): number {
   let crc = 0xffffffff
   for (let i = 0; i < data.length; i++) {
     const byte = data[i]

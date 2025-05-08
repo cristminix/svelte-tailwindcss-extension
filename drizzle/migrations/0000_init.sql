@@ -103,6 +103,7 @@ CREATE TABLE `thumbnail` (
 	`parentId` integer NOT NULL,
 	`size` text(50) NOT NULL,
 	`url` text NOT NULL,
+	`path` text,
 	`expiresAt` text NOT NULL,
 	`timestamp` text DEFAULT CURRENT_TIMESTAMP NOT NULL
 );

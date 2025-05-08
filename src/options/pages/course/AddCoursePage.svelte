@@ -9,114 +9,141 @@
   import PrxCache from "@/global/classes/PrxCache"
   import { createDownloadFile } from "@/global/fn/createDownloadFile"
   import { getM3RecByType } from "@/content-scripts/inject/fn/legacy/getM3RecByType"
-  import {fetchXmlDoc, getCourseSectionTocsFromDoc} from "@/global/classes/course-api/fn";
-  import {courseUrlFromSlug} from "@/global/fn/course/courseUrlFromSlug";
-  import {getCourseInfoFromDoc} from "@/global/classes/course-api/fn/getCourseInfoFromDoc";
-  import {getCourseAuthorsFromDoc} from "@/global/classes/course-api/fn/getCourseAuthorsFromDoc";
-  import CourseInfoDetail from "@/options/pages/course/add-course-page/CourseInfoDetail.svelte";
-  import type {CourseAuthorInterface, CourseInfoInterface, TocInterface, TocSecInterface} from "@/global/classes/types";
-  import {getCourseInfoLegacy} from "@/global/fn/course/legacy/parser/getCourseInfoLegacy";
-  import {getCourseAuthorsLegacy} from "@/global/fn/course/legacy/parser/course/getCourseAuthorsLegacy";
-  import ICRDQueueMan from "@/options/pages/course/add-course-page/ICRDQueueMan.svelte";
-  import {getCourseTocsLegacy} from "@/global/fn/course/legacy/parser/toc/getCourseTocsLegacy";
+  import {
+    fetchXmlDoc,
+    getCourseSectionTocsFromDoc,
+  } from "@/global/classes/course-api/fn"
+  import { courseUrlFromSlug } from "@/global/fn/course/courseUrlFromSlug"
+  import { getCourseInfoFromDoc } from "@/global/classes/course-api/fn/getCourseInfoFromDoc"
+  import { getCourseAuthorsFromDoc } from "@/global/classes/course-api/fn/getCourseAuthorsFromDoc"
+  import CourseInfoDetail from "@/options/pages/course/add-course-page/CourseInfoDetail.svelte"
+  import type {
+    CourseAuthorInterface,
+    CourseInfoInterface,
+    TocInterface,
+    TocSecInterface,
+  } from "@/global/classes/types"
+  import { getCourseInfoLegacy } from "@/global/fn/course/legacy/parser/getCourseInfoLegacy"
+  import { getCourseAuthorsLegacy } from "@/global/fn/course/legacy/parser/course/getCourseAuthorsLegacy"
+  import ICRDQueueMan from "@/options/pages/course/add-course-page/ICRDQueueMan.svelte"
+  import { getCourseTocsLegacy } from "@/global/fn/course/legacy/parser/toc/getCourseTocsLegacy"
 
   export let store: DBStore
   export let params: any = null
   export let queryString: string = ""
-  export let routeApp: any=null
+  export let routeApp: any = null
 
   let toastRef: Toast
   const loading = writable(true)
   const mSetting = store.get("Setting") as MSetting
   const mPrxCache = PrxCache.getInstance()
-  let courseInfo = writable<CourseInfoInterface|null>(null)
+  let courseInfo = writable<CourseInfoInterface | null>(null)
   let courseAuthors = writable<CourseAuthorInterface[]>([])
   let tocsBySections = writable<TocSecInterface>({})
-  let icrdQueueManRef:ICRDQueueMan
+  let icrdQueueManRef: ICRDQueueMan
 
-let fetchStateInfoRef: FetchStateInfo
+  let fetchStateInfoRef: FetchStateInfo
   store.onReady(() => loading.set(false))
   const clearDetails = () => {
-    courseInfo.update(o => null)
-    courseAuthors.update(o => [])
+    courseInfo.update((o) => null)
+    courseAuthors.update((o) => [])
   }
   onMount(() => {
     if (store.isReady()) loading.set(false)
     clearDetails()
 
-    if(routeApp){
+    if (routeApp) {
       routeApp.addRouteChangeCallback(() => {
         clearDetails()
-
       }, "add-course-page")
     }
   })
-  function fetchCourseTocsSecs(courseInfo_:CourseInfoInterface|null,mode:string,docOrDs:any,courseSlug:string){
-    let tocsBySections : TocSecInterface= {}
+  function fetchCourseTocsSecs(
+    courseInfo_: CourseInfoInterface | null,
+    mode: string,
+    docOrDs: any,
+    courseSlug: string
+  ) {
+    let tocsBySections: TocSecInterface = {}
 
-    if(courseInfo_){
-      if(Array.isArray(courseInfo_.sections)){
+    if (courseInfo_) {
+      if (Array.isArray(courseInfo_.sections)) {
         for (const section of courseInfo_.sections) {
-          const {itemStars,slug:sectionSlug} = section
-          let tocs : TocInterface[] | null = null
-          if(mode === "legacy") {
-            tocs = getCourseTocsLegacy(docOrDs,itemStars)
-          }else{
-            tocs = getCourseSectionTocsFromDoc(section,docOrDs,courseSlug)
+          const { itemStars, slug: sectionSlug } = section
+          let tocs: TocInterface[] | null = null
+          if (mode === "legacy") {
+            tocs = getCourseTocsLegacy(docOrDs, itemStars)
+          } else {
+            tocs = getCourseSectionTocsFromDoc(section, docOrDs, courseSlug)
           }
-          if(Array.isArray(tocs)){
+          if (Array.isArray(tocs)) {
             tocsBySections[sectionSlug as keyof TocSecInterface] = tocs
-          }else{
+          } else {
             tocsBySections[sectionSlug as keyof TocSecInterface] = []
           }
         }
       }
     }
-    console.log({tocsBySections})
+    console.log({ tocsBySections })
     return tocsBySections
   }
   async function onFetchCourseLegacy(slug: string) {
     const result = await mPrxCache.get(slug)
     const ds = result.content
     // createDownloadFile(JSON.stringify(ds), "legacy-m3rec.json")
-    const rows = getM3RecByType("com.linkedin.learning.api.deco.content.Course", ds)
-    const courseInfoTMP = getCourseInfoLegacy(ds,slug)
-    const courseAuthorsTMP = getCourseAuthorsLegacy(ds,slug)
-    const tocsBySectionsTMP : TocSecInterface= fetchCourseTocsSecs(courseInfoTMP,"legacy",ds,slug)
+    const rows = getM3RecByType(
+      "com.linkedin.learning.api.deco.content.Course",
+      ds
+    )
+    const courseInfoTMP = getCourseInfoLegacy(ds, slug)
+    const courseAuthorsTMP = getCourseAuthorsLegacy(ds, slug)
+    const tocsBySectionsTMP: TocSecInterface = fetchCourseTocsSecs(
+      courseInfoTMP,
+      "legacy",
+      ds,
+      slug
+    )
 
-    tocsBySections.update(o=> tocsBySectionsTMP)
+    tocsBySections.update((o) => tocsBySectionsTMP)
 
-    courseInfo.update(o=>courseInfoTMP)
-    courseAuthors.update(o=> courseAuthorsTMP)
-
+    courseInfo.update((o) => courseInfoTMP)
+    courseAuthors.update((o) => courseAuthorsTMP)
 
     console.info({ rows, ds })
   }
 
   async function onFetchCourse(slug: string) {
     // Implement non-legacy mode fetch logic here
-    fetchStateInfoRef.setLoading(true)
     fetchStateInfoRef.setRunLevel(1)
 
-    const {doc,statusCode,errorMessage} = await fetchXmlDoc(courseUrlFromSlug(slug),true)
+    const { doc, statusCode, errorMessage } = await fetchXmlDoc(
+      courseUrlFromSlug(slug),
+      true
+    )
     fetchStateInfoRef.setStatusCode(statusCode)
     fetchStateInfoRef.setLoading(false)
     fetchStateInfoRef.setRunLevel(2)
-    if(statusCode===200){
+    if (statusCode === 200) {
       // const html = doc.html()
       // createDownloadFile( html,`${slug}.xml`)
-      const courseInfoTMP =  getCourseInfoFromDoc(doc,slug)
-      const courseAuthorsTMP =  getCourseAuthorsFromDoc(doc)
-      const tocsBySectionsTMP : TocSecInterface= fetchCourseTocsSecs(courseInfoTMP,"non-legacy",doc,slug)
+      const courseInfoTMP = getCourseInfoFromDoc(doc, slug)
+      const courseAuthorsTMP = getCourseAuthorsFromDoc(doc)
+      const tocsBySectionsTMP: TocSecInterface = fetchCourseTocsSecs(
+        courseInfoTMP,
+        "non-legacy",
+        doc,
+        slug
+      )
 
-      tocsBySections.update(o=> tocsBySectionsTMP)
-      courseInfo.update(o=>courseInfoTMP)
-      courseAuthors.update(o=> courseAuthorsTMP)
-      console.info({courseAuthorsTMP})
+      tocsBySections.update((o) => tocsBySectionsTMP)
+      courseInfo.update((o) => courseInfoTMP)
+      courseAuthors.update((o) => courseAuthorsTMP)
+      console.info({ courseAuthorsTMP })
     }
-    fetchStateInfoRef.setLoading(false)
   }
   async function onFetch() {
+    fetchStateInfoRef.setLoading(true)
+
     const searchParams = getUrlSearchParams(queryString) as any
     // console.log(searchParams.legacyMode)
     const legacyMode = searchParams.legacyMode === "true"
@@ -127,12 +154,15 @@ let fetchStateInfoRef: FetchStateInfo
         await onFetchCourseLegacy(slug)
       } else {
         await onFetchCourse(slug)
-
       }
       toastRef.add("Fetch completed successfully")
-      if(icrdQueueManRef){
-        if($courseInfo !== null)
-        await icrdQueueManRef.processQueue($courseInfo,$courseAuthors,$tocsBySections)
+      if (icrdQueueManRef) {
+        if ($courseInfo !== null)
+          await icrdQueueManRef.processQueue(
+            $courseInfo,
+            $courseAuthors,
+            $tocsBySections
+          )
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -141,6 +171,7 @@ let fetchStateInfoRef: FetchStateInfo
         toastRef.add("An unknown error occurred during fetch", "error")
       }
     }
+    fetchStateInfoRef.setLoading(false)
   }
 
   function onRetry() {
@@ -154,11 +185,16 @@ let fetchStateInfoRef: FetchStateInfo
   <span><i class="fa fa-spin fa-spinner" /></span>
 {:else}
   <div class="add-course-page">This is add course-page</div>
-  <FetchStateInfo bind:this={fetchStateInfoRef}
+  <FetchStateInfo
+    bind:this={fetchStateInfoRef}
     name="Course Info"
     {onFetch}
     {onRetry}
   />
-  <CourseInfoDetail courseInfo={$courseInfo} courseAuthors={$courseAuthors} tocsBySections={$tocsBySections}/>
-  <ICRDQueueMan routeApp={routeApp} store={store} bind:this={icrdQueueManRef}/>
+  <CourseInfoDetail
+    courseInfo={$courseInfo}
+    courseAuthors={$courseAuthors}
+    tocsBySections={$tocsBySections}
+  />
+  <ICRDQueueMan {routeApp} {store} bind:this={icrdQueueManRef} />
 {/if}
